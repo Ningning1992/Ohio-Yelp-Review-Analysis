@@ -1,12 +1,15 @@
-# Your Title here
+# Modeling on Ohio's Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression
 
-This readme should be written by you, providing a high-level summary for newcomers of what the repository is about, what's where, and what to do to either read the main article or run the various analyses.
+## Purpose of the repository.
+This repository is inspired by Yelp DataSet Challenge Round 10. The original data can be retrieved from [Yelp Dataset](https://www.yelp.com/dataset/challenge). We focus on a subset of the whole data, which is the restaurants from the state of Ohio. We tokenize the customers’ reviews and apply latent dirichelet allocation and multinomial logistic regression. Both methods provide insights about how customers’ review contribute the ratings of restaurants. 
 
-You don't need to replicate your main scientific narrative here, a repository README is meant to convey to anyone who finds your repo a few high-level things, for example:
+## How to use this repository.
+The result of analysis is summarized in the ‘main.ipynb’ and please refer to it for a quick introduction to the repository. 
 
-- Purpose of the repository.
-- Basic instructions to use it: what to install, if any, what to run, etc.  This will vary a lot from repo to repo, so use your judgment.
-- A brief description of what is where (e.g. what important directories are included).
-- Licensing conditions.
+Please use the **yml** file for the reference of the necessary environment and package dependencies for the scripts to run and use the **Make** file to automatically install the environment and run the Jupyter Notebook.
 
-Look around on Github for inspiration on what people include in their READMEs that you find useful and informative. The [Reproducible Research section](https://github.com/jupyter/jupyter/wiki/A-gallery-of-interesting-Jupyter-Notebooks#reproducible-academic-publications) of the Jupyter Notebook Gallery includes a number of research-oriented links that may be useful.
+## Structure of this repository.
+Please find the data that analyzed in the **data** folder, relevant figures in the **fig** folder and results in the **result** folder.
+
+## Licensing.
+This repository is licensed under the **MIT** license
