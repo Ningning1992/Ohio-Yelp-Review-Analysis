@@ -1,8 +1,8 @@
-.PHONY: env all 
+.PHONY: env all clean
 SHELL := /bin/bash
 .DEFAULT_GOAL := all
 
-notebooks= LDA.ipynb Logistic.ipynb main.ipynb
+notebooks= Data_Cleaning.ipynb LDA.ipynb Logistic.ipynb main.ipynb
 
 env: environment.yml
 	conda env create -n projectYelp -f environment.yml
@@ -10,4 +10,6 @@ env: environment.yml
 
 all: $(notebooks)
 	jupyter nbconvert --ExecutePreprocessor.timeout=-1 --to notebook --execute $(notebooks)
-	
+
+clean:  
+	rm result/* fig/* 
