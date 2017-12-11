@@ -6,10 +6,12 @@ notebooks= Data_Cleaning.ipynb LDA.ipynb Logistic.ipynb main.ipynb
 
 env: environment.yml
 	conda env create -n projectYelp -f environment.yml
-	source activate projectYelp
+	
 
 all: $(notebooks)
+	source activate projectYelp
 	jupyter nbconvert --ExecutePreprocessor.timeout=-1 --to notebook --execute $(notebooks)
+
 
 clean:  
 	rm result/* fig/* 
