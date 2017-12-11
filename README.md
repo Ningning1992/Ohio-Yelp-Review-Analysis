@@ -8,7 +8,7 @@ The result of analysis is summarized in the ‘main.ipynb’ and please refer to
 
 Please use the **yml** file for the reference of the necessary environment and package dependencies for the scripts to run and use the **Make** file to automatically install the environment and run the Jupyter Notebook.
 
-Note that when you run the Make file, the 'data_cleaning' notebook will not be executed since the data cleaning and extraction were performed locally as the raw JSON file is too large (5Gb) to be uploaded onto GitHub. However, subsequent notebooks are OK since the data they worked with is stored at 'data' folder in the repository.
+Note that when you run the Make file, the 'data_cleaning' notebook will not be executed since the data cleaning and extraction were performed locally as the raw JSON file is too large (5Gb) to be uploaded onto GitHub. However, subsequent notebooks are OK since the data they worked with is stored at 'data' folder in the repository. The reproducibility of this research is still preserved.
 
 ## Structure of this repository.
 Please find the data that analyzed in the **data** folder, relevant figures in the **fig** folder and results in the **result** folder.
