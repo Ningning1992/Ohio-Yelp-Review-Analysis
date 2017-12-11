@@ -1,4 +1,4 @@
-name: yelp
+name: projectYelp
 channels:
 - defaults
 dependencies:
@@ -48,12 +48,13 @@ dependencies:
 - markupsafe=1.0=py35h9ba0a7f_1
 - matplotlib=2.1.0=py35hc2166d4_0
 - mistune=0.8.1=py35hb94c1e4_0
-- mkl=2018.0.0=h5ef208c_6
+- mkl=2018.0.1=hfbd8650_4
 - nbconvert=5.3.1=py35h63fb950_0
 - nbformat=4.4.0=py35h41c2038_0
 - ncurses=6.0=hd04f020_2
 - nltk=3.2.5=py35h87b897b_0
 - notebook=5.2.1=py35h5b7e3fc_0
+- numexpr=2.6.4=py35hcf51bc4_0
 - numpy=1.13.3=py35hfd7066c_0
 - openssl=1.0.2m=h86d3e6a_1
 - pandas=0.21.0=py35h4431f20_1
@@ -110,5 +111,6 @@ dependencies:
   - jupyter-core==4.4.0
   - prompt-toolkit==1.0.15
   - smart-open==1.5.3
-prefix: /Users/ningning/anaconda/envs/yelp
+  - tables==3.4.2
+prefix: /Users/ningning/anaconda/envs/projectYelp
 
