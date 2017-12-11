@@ -12,7 +12,7 @@ Please go to [Yelp Dataset Challenge](https://www.yelp.com/dataset/challenge) to
 
 This project is for academic use only and subject to the [Yelp Dataset Challenge License](https://s3-media2.fl.yelpcdn.com/assets/srv0/engineering_pages/af4b9cebfb4f/assets/vendor/dataset-challenge-dataset-agreement.pdf):
 
-    *License: Subject to the terms set forth in the Data Agreement (specifically the restrictions set
+    License: Subject to the terms set forth in the Data Agreement (specifically the restrictions set
     forth in Section 4 below), Yelp grants you a royalty-free, non-exclusive, revocable,
     non-sublicensable, non-transferable, fully paid-up right and license during the Term to use,
     access, and create derivative works of the Data in electronic form for academic purposes only.
@@ -20,7 +20,7 @@ This project is for academic use only and subject to the [Yelp Dataset Challenge
     acknowledge and agree that Yelp may request information about, review, audit, and/or monitor
     your use of the Data at any time in order to confirm compliance with the Data Agreement.
     Nothing herein shall be construed as a license to use Yelp?s registered trademarks or service
-    marks, or any other Yelp branding.*
+    marks, or any other Yelp branding.
 
 
 ## Structure of this repository.
