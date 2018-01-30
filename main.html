@@ -1,0 +1,1172 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Modeling on Ohio’s Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression &#8212; Ohio-Yelp-Review-Analysis 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Extract Restaurants Data" href="Data_Cleaning.html" />
+    <link rel="prev" title="Modeling on Ohio&#39;s Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression" href="README.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+</style>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># import necessary packages</span>
+<span class="o">%</span><span class="k">matplotlib</span> inline
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">shelve</span>
+<span class="kn">import</span> <span class="nn">scipy</span>
+<span class="kn">from</span> <span class="nn">sklearn.externals</span> <span class="kn">import</span> <span class="n">joblib</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="Modeling-on-Ohio's-Restaurant-Yelp-Review-Data:-Comparison-Between-Latent-Dirichelet-Allocation-and-Multinomial-Logistic-Regression">
+<h1>Modeling on Ohio’s Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression<a class="headerlink" href="#Modeling-on-Ohio's-Restaurant-Yelp-Review-Data:-Comparison-Between-Latent-Dirichelet-Allocation-and-Multinomial-Logistic-Regression" title="Permalink to this headline">¶</a></h1>
+<p><strong>Author:</strong> Ningning Long, Yue You, Tian Xia</p>
+<div class="section" id="Abstract">
+<h2>Abstract<a class="headerlink" href="#Abstract" title="Permalink to this headline">¶</a></h2>
+<p>When running the business like restaurants or cafes, owners of business
+care a lot of how they can make uses of customers’ reviews after
+customers visit their businesses. Also, sometimes, it is too
+time-consuming to go through each review about a business, so people
+only pay attention to the ratings. However, an overall rating cannot
+convey the information that led a reviewer to that experience, and
+people have different standards of rating, so it may be misleading. For
+example, if a person cares a lot about a restaurant’s ambiance and goes
+to a restaurant with below-average ambiance but high rating because of
+its the taste of its food, this person may feel disappointed. Therefore,
+we hope to extract the topics involved in the customers’ reviews, in
+order to see the influential factors of the customer ratings. Also, the
+insights mined from customers’ reviews will help discover the weaknesses
+of the business and contribute to the improvements of service, products
+or ambiance.</p>
+<p>This study is aimed at utilizing machine learning and natural language
+processing (NLP) techniques to analyze customers’ reviews from the <a class="reference external" href="https://www.yelp.com/dataset/challenge">Yelp
+Dataset Challenge</a>. To be
+more specific, in this project, we aim at identifying topics involved in
+every review and the association between the reviews and the customer
+ratings. We focus on a subset data from the whole dataset challenge
+(i.e. the restaurants’ reviews in the state of Ohio). We are interested
+in using the Latent Dirichlet Allocation (LDA) method to find out the
+topics underlying the customer’s reviews. The latent Dirichlet
+Allocation (LDA) is an unsupervised machine learning algorithm that can
+generate topics based on word frequency from a set of documents. We will
+use the topics to investigate how they match the reviews and predict the
+customers’ ratings. Meanwhile, in order to make a comparison, we will
+also compute the TF-IDF of reviews and use them to run the multinomial
+logistic regression to predict customers’ ratings.</p>
+</div>
+<div class="section" id="Data-Clean-and-Exploration">
+<h2>Data Clean and Exploration<a class="headerlink" href="#Data-Clean-and-Exploration" title="Permalink to this headline">¶</a></h2>
+<p>The raw data are JSON files from the Round 10 <a class="reference external" href="https://www.yelp.com/dataset/challenge">Yelp Dataset
+Challenge</a>. We subset and
+extract part of the data and save it in the <strong>‘data’</strong> folder. The
+<em>‘restaurant.csv’</em> file is the meta-data for the restaurants in the
+state of Ohio. The <em>‘reviews.csv’</em> file is the file that we mainly
+worked with, which contains the customers’ reviews for restaurants in
+the state of Ohio. Our latent dirichelet allocation (LDA) model and
+multinomial logistic regression model mainly use the reviews in that
+file.</p>
+<p>Here is a quick look of the <em>‘restaurant.csv’</em> file in the <strong>‘data’</strong>
+folder:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./data/restaurant.csv&#39;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>state</th>
+      <th>city</th>
+      <th>address</th>
+      <th>name</th>
+      <th>business_id</th>
+      <th>stars</th>
+      <th>review_count</th>
+      <th>categories</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>OH</td>
+      <td>Painesville</td>
+      <td>1 S State St</td>
+      <td>Sidewalk Cafe Painesville</td>
+      <td>Bl7Y-ATTzXytQnCceg5k6w</td>
+      <td>3.0</td>
+      <td>26</td>
+      <td>['American (Traditional)', 'Breakfast &amp; Brunch...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>OH</td>
+      <td>Northfield</td>
+      <td>10430 Northfield Rd</td>
+      <td>Zeppe's Pizzeria</td>
+      <td>7HFRdxVttyY9GiMpywhhYw</td>
+      <td>3.0</td>
+      <td>7</td>
+      <td>['Pizza', 'Caterers', 'Italian', 'Wraps', 'Eve...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>OH</td>
+      <td>Mentor</td>
+      <td>9209 Mentor Ave</td>
+      <td>Firehouse Subs</td>
+      <td>lXcxSdPa2m__LqhsaL9t9A</td>
+      <td>3.5</td>
+      <td>9</td>
+      <td>['Restaurants', 'Sandwiches', 'Delis', 'Fast F...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>OH</td>
+      <td>Cleveland</td>
+      <td>13181 Cedar Rd</td>
+      <td>Richie Chan's Chinese Restaurant</td>
+      <td>Pawavw9U8rjxWVPU-RB7LA</td>
+      <td>3.5</td>
+      <td>22</td>
+      <td>['Chinese', 'Restaurants']</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>OH</td>
+      <td>Northfield</td>
+      <td>134 E Aurora Rd</td>
+      <td>Romeo's Pizza</td>
+      <td>RzVHK8Jfcy8RvXjn_z3OBw</td>
+      <td>4.0</td>
+      <td>4</td>
+      <td>['Restaurants', 'Pizza']</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Here is a quick look of the <em>‘reviews.csv’</em> file in the <strong>‘data’</strong>
+folder. We will primarily work on the ‘text’ column, which stores the
+customers’ reviews, and the ‘stars’ column, which stores the actual
+customers’ ratings to restaurants, in our analysis.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;./data/reviews.csv&#39;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>business_id</th>
+      <th>cool</th>
+      <th>date</th>
+      <th>funny</th>
+      <th>review_id</th>
+      <th>stars</th>
+      <th>text</th>
+      <th>useful</th>
+      <th>user_id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>52</th>
+      <td>tulUhFYMvBkYHsjmn30A9w</td>
+      <td>1</td>
+      <td>2013-11-19</td>
+      <td>0</td>
+      <td>FsS5TUFPI8QJEE60-HR3dw</td>
+      <td>2</td>
+      <td>Wished it was better..\nAfter watching man vs....</td>
+      <td>1</td>
+      <td>bWh4k_cCuVt5GLVd33xIxg</td>
+    </tr>
+    <tr>
+      <th>53</th>
+      <td>tulUhFYMvBkYHsjmn30A9w</td>
+      <td>1</td>
+      <td>2014-12-18</td>
+      <td>0</td>
+      <td>7xGHiLP1vAaGmX6srC_XXw</td>
+      <td>4</td>
+      <td>Decor and service leave much to be desired, bu...</td>
+      <td>0</td>
+      <td>nQ4e81UdfczimYcIUtO3HA</td>
+    </tr>
+    <tr>
+      <th>54</th>
+      <td>tulUhFYMvBkYHsjmn30A9w</td>
+      <td>1</td>
+      <td>2014-09-12</td>
+      <td>0</td>
+      <td>ZWlXWc9LHPLiOksrp-enyw</td>
+      <td>5</td>
+      <td>My husband and I ate here tonight for the firs...</td>
+      <td>0</td>
+      <td>gJPa95ZRozMhiOqvENpspA</td>
+    </tr>
+    <tr>
+      <th>55</th>
+      <td>tulUhFYMvBkYHsjmn30A9w</td>
+      <td>1</td>
+      <td>2012-02-28</td>
+      <td>1</td>
+      <td>KpRwKYyQ93ypyDSdA7IXfw</td>
+      <td>2</td>
+      <td>Don't believe the hype. Nooooo! \n\nIn the Cle...</td>
+      <td>5</td>
+      <td>bAwfPH4lXNzgcYp9JFy6ow</td>
+    </tr>
+    <tr>
+      <th>56</th>
+      <td>tulUhFYMvBkYHsjmn30A9w</td>
+      <td>3</td>
+      <td>2014-10-06</td>
+      <td>6</td>
+      <td>OZvrgp4vWBsYqIt3-YMSEw</td>
+      <td>3</td>
+      <td>Don't believe the hype!\n\nAfter seeing this l...</td>
+      <td>10</td>
+      <td>BjtJ3VkMOxV2Lan037AFuw</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>In short summary of the data, we focus on the 316 restaurants which have
+100 customers’ reviews at least, in the state of Ohio. The maximum
+number of reviews for a single restaurant in our sample is around 900.
+The distribution of mean star ratings received for restaurants is skewed
+with the peak around 4 stars.</p>
+</div>
+<div class="section" id="Topics-Analysis-with-Latent-Dirichelet-Allocation-(LDA)">
+<h2>Topics Analysis with Latent Dirichelet Allocation (LDA)<a class="headerlink" href="#Topics-Analysis-with-Latent-Dirichelet-Allocation-(LDA)" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Text-Manipulation">
+<h3>Text Manipulation<a class="headerlink" href="#Text-Manipulation" title="Permalink to this headline">¶</a></h3>
+<p>Before applying the LDA model, we manipulate the customer reviews in
+order to get the tokenized review data. For instance, an original review
+from the Yelp dataset is shown as the following.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">with</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;result/first_review_train&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">result</span><span class="p">:</span>
+    <span class="n">first_review_train</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;first_review_train&#39;</span><span class="p">]</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">first_review_train</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Wished it was better..
+After watching man vs. food I decided to stop by, décor was not that homey and welcoming, and the neighborhood was bad, but nothing I haven&#39;t been around before.  The ribs were very fatty and grisly, it was disappointing and I didn&#39;t get enough sauce and when I asked for a little more they wanted to charge me, the coleslaw was awesome!  I noticed a hair in my food and it turned me off to the rest of it, so i threw it away , I wont be returning...
+sorry guys
+</pre></div></div>
+</div>
+<p>In order to find the topics, we need to tokenize the reviews. First, we
+change all the words in each review as the lower case for convenience in
+the topic analysis. Then, we apply some string manipulation in order to
+save the meaningful words and numbers. Next, we delete all the stop
+words from each review, which are certain parts of English speech, like
+(for, or) or the words that are meaningless to the topic model. Finally,
+we decide to only keep the words that are the noun for further analysis.</p>
+<p>After the text manipulation, the above raw review becomes the following
+word list.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">with</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;result/text_array&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">result</span><span class="p">:</span>
+    <span class="n">text_array</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;text_array&#39;</span><span class="p">]</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">text_array</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;man&#39;, &#39;vs&#39;, &#39;food&#39;, &#39;cor&#39;, &#39;homey&#39;, &#39;neighborhood&#39;, &#39;nothing&#39;, &#39;ribs&#39;, &#39;sauce&#39;, &#39;charge&#39;, &#39;coleslaw&#39;, &#39;awesome&#39;, &#39;hair&#39;, &#39;food&#39;, &#39;rest&#39;, &#39;threw&#39;]
+</pre></div></div>
+</div>
+<p>The word list contains the words talking about the food, service, and
+location of the restaurants, which are helpful for our topic modeling.</p>
+<p>Then, we use the Dictionary() function to traverse the <strong>text_array</strong>,
+assigning a unique integer id to each unique token while also collecting
+word counts and relevant statistics. Next, we use doc2bow() function
+converts dictionary into a bag-of-words. The details can be found in
+<strong>LDA.ipynb</strong>. The corpus after these processes is used as input in LDA
+model.</p>
+</div>
+<div class="section" id="Training-Set-and-Validation-Set">
+<h3>Training Set and Validation Set<a class="headerlink" href="#Training-Set-and-Validation-Set" title="Permalink to this headline">¶</a></h3>
+<p>In order to fit and apply LDA model, we split data set into a training
+set and a validation set. We decide to set the validation set as the 896
+reviews from the restaurant that has the largest number of reviews.
+Then, the rest of the reviews are considered as training set. The
+training set is used to train the LDA model and find the topics, and the
+trained LDA model is applied on the validation set for further analysis
+and linear regression.</p>
+</div>
+<div class="section" id="Latent-Dirichelet-Allocation-Model">
+<h3>Latent Dirichelet Allocation Model<a class="headerlink" href="#Latent-Dirichelet-Allocation-Model" title="Permalink to this headline">¶</a></h3>
+<p>To discover latent topics in each review, we use Latent Dirichlet
+Allocation (LDA), a topic model that generates topics based on word
+frequency from a set of documents. LDA assumes that (1) documents
+contain multiple latent topics; (2) each document is assumed to be
+generated by a generative process defined by probabilistic model; and
+(3) each topic is characterized by a distribution over a fixed
+vocabulary. More specically, the joint distribution of the hidden topics
+and observed variables (words) is:</p>
+<div class="math">
+\[p(\phi_{1:K}, \theta_{1:D}, Z_{1:D}, W_{1:D} ) = \prod_{i=1}^K p(\phi_{i}) \prod_{d=1}^D p(\theta_{d}) \prod_{n=1}^N p(Z_{d,n}|\theta_{d}) p(W_{d,n}|\phi_{1:K}, Z_{d,n})\]</div>
+<p>where</p>
+<div class="math">
+\[\phi_{1:K}: the\ topics, each\ \phi_k\ is\ a\ distribution\ over\ the\ vocabulary\ ; \phi_{k}\sim Dirichlet_V(\beta)\]</div>
+<div class="math">
+\[\theta_{1:D}: the\ topic\ proportion\ for\ document\ 1:D;\ \theta_d \sim Dirichlet_K(\alpha)\]</div>
+<div class="math">
+\[Z_{1:D}: the\ topic\ assignments\ for\ document\ 1:D;\ Z_d \sim Multinomial_K(\theta_d)\]</div>
+<div class="math">
+\[W_{1:D}: the\ observed\ words\ for\ document\ 1:D;\ W_d \sim Multinomial_V(\phi_z)\]</div>
+<p>LDA learns the distributions (e.g. the distribution of a set of topics,
+their associated word probabilities, the topic of each word, and the
+particular topic mixture of each document) by using Bayesian inference.
+After repeating the updating process for a large number of times, the
+model will reach a steady state and can be used to estimate the hidden
+topics, topic mixtures of each document and the words associated with
+each topic. We use the <strong>LdaModel</strong> in gensim package to apply the LDA
+model to our training set. When fitting the model, We have tried 6, 8,
+10, 12, 15 as the number of topics, and it looks like that the number of
+topics = 10 works the best. Thus, we save the model with 10 topics for
+further analysis.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># read in the lda model</span>
+<span class="n">ldamodel</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;result/finalized_model_10.sav&quot;</span><span class="p">)</span>
+
+<span class="c1"># the topics found by lda model</span>
+<span class="n">ldamodel</span><span class="o">.</span><span class="n">print_topics</span><span class="p">(</span><span class="n">num_topics</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">num_words</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[7]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[(0,
+  &#39;0.109*&quot;food&quot; + 0.075*&quot;place&quot; + 0.040*&quot;service&quot; + 0.024*&quot;time&quot; + 0.020*&quot;restaurant&quot; + 0.016*&quot;menu&quot; + 0.013*&quot;staff&quot; + 0.012*&quot;everything&quot;&#39;),
+ (1,
+  &#39;0.047*&quot;pizza&quot; + 0.028*&quot;place&quot; + 0.017*&quot;cleveland&quot; + 0.011*&quot;time&quot; + 0.010*&quot;way&quot; + 0.009*&quot;line&quot; + 0.009*&quot;root&quot; + 0.009*&quot;home&quot;&#39;),
+ (2,
+  &#39;0.052*&quot;food&quot; + 0.035*&quot;time&quot; + 0.034*&quot;service&quot; + 0.019*&quot;experience&quot; + 0.018*&quot;order&quot; + 0.018*&quot;night&quot; + 0.015*&quot;place&quot; + 0.015*&quot;restaurant&quot;&#39;),
+ (3,
+  &#39;0.018*&quot;sauce&quot; + 0.015*&quot;salad&quot; + 0.014*&quot;flavor&quot; + 0.014*&quot;dinner&quot; + 0.013*&quot;pork&quot; + 0.013*&quot;chicken&quot; + 0.013*&quot;meal&quot; + 0.011*&quot;cream&quot;&#39;),
+ (4,
+  &#39;0.055*&quot;thai&quot; + 0.037*&quot;sushi&quot; + 0.035*&quot;spicy&quot; + 0.032*&quot;rice&quot; + 0.030*&quot;roll&quot; + 0.025*&quot;tea&quot; + 0.024*&quot;curry&quot; + 0.020*&quot;shrimp&quot;&#39;),
+ (5,
+  &#39;0.086*&quot;coffee&quot; + 0.069*&quot;breakfast&quot; + 0.054*&quot;brunch&quot; + 0.027*&quot;bacon&quot; + 0.020*&quot;egg&quot; + 0.019*&quot;toast&quot; + 0.018*&quot;morning&quot; + 0.018*&quot;hash&quot;&#39;),
+ (6,
+  &#39;0.066*&quot;beef&quot; + 0.030*&quot;pho&quot; + 0.026*&quot;pork&quot; + 0.025*&quot;soup&quot; + 0.020*&quot;cleveland&quot; + 0.016*&quot;bowl&quot; + 0.014*&quot;pot&quot; + 0.014*&quot;meat&quot;&#39;),
+ (7,
+  &#39;0.067*&quot;beer&quot; + 0.053*&quot;place&quot; + 0.047*&quot;bar&quot; + 0.047*&quot;food&quot; + 0.034*&quot;selection&quot; + 0.020*&quot;service&quot; + 0.018*&quot;night&quot; + 0.017*&quot;cleveland&quot;&#39;),
+ (8,
+  &#39;0.043*&quot;sandwich&quot; + 0.034*&quot;wife&quot; + 0.028*&quot;bbq&quot; + 0.024*&quot;dog&quot; + 0.020*&quot;meat&quot; + 0.019*&quot;melt&quot; + 0.017*&quot;beef&quot; + 0.017*&quot;chicken&quot;&#39;),
+ (9,
+  &#39;0.109*&quot;burger&quot; + 0.051*&quot;hour&quot; + 0.030*&quot;bar&quot; + 0.023*&quot;tacos&quot; + 0.023*&quot;bartender&quot; + 0.022*&quot;spot&quot; + 0.019*&quot;b&quot; + 0.015*&quot;taco&quot;&#39;)]
+</pre></div>
+</div>
+</div>
+<p>The LDA model finds the 10 topics, and we have shown the 10 topics with
+8 highest frequent words in each topic as above. The 10 topics are
+relatively interpretable. By associating and categorizing the
+high-frequency words of each topic, we name the topics as the following:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">with</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;result/topic_name&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">result</span><span class="p">:</span>
+    <span class="n">topic_dict</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;topic_name&#39;</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">keys</span><span class="p">,</span><span class="n">values</span> <span class="ow">in</span> <span class="n">topic_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">((</span><span class="n">keys</span><span class="p">,</span> <span class="n">values</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(0, &#39;Service1&#39;)
+(1, &#39;Location&#39;)
+(2, &#39;Service2&#39;)
+(3, &#39;American1&#39;)
+(4, &#39;Asian1&#39;)
+(5, &#39;Breakfast&#39;)
+(6, &#39;Asian2&#39;)
+(7, &#39;Bar&#39;)
+(8, &#39;American2&#39;)
+(9, &#39;Mexican&#39;)
+</pre></div></div>
+</div>
+</div>
+<div class="section" id="Further-Interpretation-of-Topics-with-A-Review">
+<h3>Further Interpretation of Topics with A Review<a class="headerlink" href="#Further-Interpretation-of-Topics-with-A-Review" title="Permalink to this headline">¶</a></h3>
+<p>In order to see if the topic modeling makes sense, we have extracted a
+review from the validation set and applied LDA to find the topics
+probability of this review.</p>
+<p>Let’s take a look at an original review from the validation set.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">with</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;result/first_review_vali&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">result</span><span class="p">:</span>
+    <span class="n">example_review</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;first_review_vali&#39;</span><span class="p">]</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">example_review</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+If I didn&#39;t have to pay the bill, I&#39;d enjoy this restaurant a lot more.
+
+Yea, yea, I know -- I could say that about any place. But this one seems to fit that statement more than almost any other in Cleveland.
+
+Two burgers -- perfectly cooked and well seasoned with just the right amount of salt and other mouth-watering dashes of spice (plus the bun was nicely seasoned, something that many burger joints neglect). A decent side of fries. About a dozen chicken wings -- Falling off the bone and &#34;Chef-ed up&#34; with lemon juice, scallions, jalapeno and garlic, not simply smothered in a thick reddish-orange sauce.
+
+But why does all of that still have to cost $50? (And those were some of the least expensive items on the menu).
+
+Nevertheless, the drinks were great -- I had two different unique takes on the Old-Fashioned (who would have thought that Curacao works with Bourbon) and Jeannene had a new spin on the French 75 before trying one of the Old-Fashioneds -- and they were well worth another $50.
+
+Coupled with attentive service and a great patio seating on E. 4th Street, I am happy to give it four stars. But the prices seem to promise a 5-star experience.
+</pre></div></div>
+</div>
+<p>Then, let’s see the topics probability associated with this review.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">with</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;result/first_review_topics_vali&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">result</span><span class="p">:</span>
+    <span class="n">topic_prob</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;first_review_topics_vali&#39;</span><span class="p">]</span>
+
+<span class="n">topic_prob</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[12]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[(2, 0.29715302229392604),
+ (0, 0.24879956111281701),
+ (9, 0.21169559380609276),
+ (3, 0.16659952745901788),
+ (4, 0.057228951701560421)]
+</pre></div>
+</div>
+</div>
+<p>Topics 0 and 2 are the service topics. Topic 9, 3, and 4 represent
+Mexican food, American food, and Asian food respectively. We can see the
+topics are relatively reasonable, since the review talks a lot about the
+service and the service topics have the highest probability in this
+review. However, according to the review, the restaurant seems to be an
+American restaurant, but Mexican food topic has the highest probability
+among the 3 topics talking about food. It shows that the topics modeling
+may not be perfect to describe every part of the restaurant.</p>
+<p>Thus, we do not have a high expectation about the prediction accuracy
+for customer ratings according to the topics, and the next section
+confirms our concern.</p>
+</div>
+<div class="section" id="Customer-Rating-Prediction-with-Topics">
+<h3>Customer Rating Prediction with Topics<a class="headerlink" href="#Customer-Rating-Prediction-with-Topics" title="Permalink to this headline">¶</a></h3>
+<p>In this section, we are trying to use the topics probability found by
+LDA model to predict the rating given by the customers. Traditional
+linear regression is applied here, in order to see if the topics from a
+review are highly associated with the customer rating.</p>
+<p>First, we use the probability of each topics as the elements of the
+design matrix. After creating the design matrix, we decide to merge few
+topics together, since they reflect the similar contents. We merge
+topics 0 and 2 together, since they both reflect the service of the
+restaurants. Topic 3 and 8 are merged, because they both represent
+American food. Finally, topic 4 and 6 are merged, since they are both
+Asian food topics. Thus, the design matrix eventually has 7 different
+features. Our response variable is the customer ratings. Also, we apply
+MSE (Mean Squared Error) as a metric of accuracy, as the original
+ratings are integers and predicted ratings are float numbers. The
+regression results are the following:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># read in the linear regression result</span>
+<span class="k">with</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;result/lm_result&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">result</span><span class="p">:</span>
+    <span class="n">lm_result</span> <span class="o">=</span>  <span class="n">result</span><span class="p">[</span><span class="s1">&#39;lm_result&#39;</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">keys</span><span class="p">,</span><span class="n">values</span> <span class="ow">in</span> <span class="n">lm_result</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Coefficients
+[-3.37275057 -2.04183867 -2.21252578 -1.61272055 -1.7564765  -1.5980306
+ -3.56868465]
+Intercept
+6.27726471738
+Mean squared error
+1.6797105653141962
+</pre></div></div>
+</div>
+<p>From the above result, we can see that the MSE is pretty high, which
+means using the topics probability to predict customer ratings is not
+very accurate for our data. Therefore, another supervised learning
+model—Multinomial Logistic Regression is applied to the data as well.
+The analysis and results can be found in another notebook.</p>
+<p>However, why using the topics probability to predict customer ratings is
+not working here? There are several possible explainations. For
+instance, when we are training the LDA model, We have only tried 6, 8,
+10, 12, 15 as the number of topics and chosen 10 as the best one because
+of time limitaion. There may be a better choice of number of topics that
+fits the data. Therefore, we believe that if we keep tunning the
+parameters in the LDA model, the prediction results can be better. Also,
+fitting the LDA model with larger dataset can be helpful as well.</p>
+</div>
+</div>
+<div class="section" id="Multinomial-Logestic-Regression-with-TF-IDF">
+<h2>Multinomial Logestic Regression with TF-IDF<a class="headerlink" href="#Multinomial-Logestic-Regression-with-TF-IDF" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="TF-IDF-transformation">
+<h3>TF-IDF transformation<a class="headerlink" href="#TF-IDF-transformation" title="Permalink to this headline">¶</a></h3>
+<p>As we have seen from the previous notebook, topic probabilities of
+reviews do not have good predictive powers of customers’ ratings of
+restaurants. Thus, in this notebook, we investigate how multinomial
+logistic regression performs. We will calculate the TF-IDF statistics
+from the reviews and use them to predict customers’ ratings.</p>
+<div class="section" id="Definition-of-TF-IDF-Transformation">
+<h4>Definition of TF-IDF Transformation<a class="headerlink" href="#Definition-of-TF-IDF-Transformation" title="Permalink to this headline">¶</a></h4>
+<p>TF-IDF means “Term Frequency - Inverse Document Frequency”. It is a
+powerful technique to detect important words in a collection of
+documents. “Term Frequency” (TF) meansures the frequency of word
+<span class="math">\(w_i\)</span> in document <span class="math">\(d_j\)</span>, and the “Inverse Document
+Frequency” (IDF) measures how much information the word provides, i.e.,
+the frequency of word <span class="math">\(w_i\)</span> in the collection of documents. The
+TF-IDF value for a word <span class="math">\(w_i\)</span> in document <span class="math">\(d_j\)</span> is
+positively associated with word frequencies and negatively associated
+with document frequencies. The math formula for TF-IDF is:</p>
+<div class="math">
+\[TF-IDF(w_i, d_j) = TF(w_i, d_j) \times IDF(w_i)\]</div>
+<p>And IDF can be smoothed using the formula:</p>
+<div class="math">
+\[IDF_{smooth}(w_i) = log(\frac{N}{1 + n_i})\]</div>
+<p>where <span class="math">\(N\)</span> is the number of documents considered and <span class="math">\(n_i\)</span> is
+the frequency of <span class="math">\(w_i\)</span> in the all documents considered.</p>
+<p>In this project, TF-IDF is used in logistic regression classification.
+In the following analysis, we did several steps to fit the best logistic
+regression model:</p>
+</div>
+<div class="section" id="Steps-in-TF-IDF-Transformation">
+<h4>Steps in TF-IDF Transformation<a class="headerlink" href="#Steps-in-TF-IDF-Transformation" title="Permalink to this headline">¶</a></h4>
+<ol class="arabic simple">
+<li>constructed the TF-IDF matrix, the matrix is ‘text_features’, a
+sparse matrix. Also, the reponses of all observations are in ‘star’,
+an array.</li>
+</ol>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># load transformed data</span>
+<span class="n">text_features</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">load_npz</span><span class="p">(</span><span class="s1">&#39;result/text_features.npz&#39;</span><span class="p">)</span>
+<span class="n">star</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;result/star.npy&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;Number of observations in the text_features dataset is&quot;</span><span class="p">,</span> <span class="n">text_features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+      <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Number of covariates in the text_features dataset is&quot;</span><span class="p">,</span> <span class="n">text_features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;The format of text_feature is</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">text_features</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:])</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;The format of star is</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">star</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Number of observations in the text_features dataset is 60222
+Number of covariates in the text_features dataset is 50137
+The format of text_feature is
+   (0, 17785)   0.060146376659
+  (0, 19534)    0.0664307345244
+  (0, 37080)    0.0971322128585
+  (0, 6868)     0.215221170104
+  (0, 41758)    0.14424586198
+  (0, 16242)    0.115560138128
+  (0, 3668)     0.169463104229
+  (0, 33687)    0.18134186701
+  (0, 42347)    0.244903534338
+  (0, 30214)    0.173935675158
+  (0, 19663)    0.219337002949
+  (0, 10430)    0.210710863093
+  (0, 38753)    0.253060975895
+  (0, 11918)    0.548103837493
+  (0, 1483)     0.283007805783
+  (0, 2376)     0.371248887227
+  (0, 43674)    0.274472118608
+The format of star is
+ [2 4 5 ..., 4 5 5]
+</pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="Next-Step">
+<h3>Next Step<a class="headerlink" href="#Next-Step" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple" start="4">
+<li>splited the whole dataset into training set and validation set using
+10-fold cross-valudation,</li>
+<li>used the <em>TF-IDF values</em> as covariates, the <em>star values</em> of review
+as responses, to build a logistic regression model in the training
+set,</li>
+<li>tried 3 different tuning parameters respectively,</li>
+<li>applied the models built in training set to validation set and
+obtained the predicted <em>star values</em> for each tuning parameter,</li>
+<li>computed the Mean Squared Error (MSE) between true <em>star value</em> and
+predicted <em>star value</em> in validation set,</li>
+<li>and chose the optimal tuning parameters which produces lowest MSE.</li>
+</ol>
+<p>Here, we run a function called ‘compute_CV_mse’ to do the rest steps
+above.</p>
+<p>We computed MSE with 10 fold cross-validation, of first 1,000 keywords,
+with random splitting seed for training and validation sets = 1, and
+original tuning parameters = (1, 100, 1000, 10000, 100000). After many
+trails, we selected the current range [10, 100] as the optimal range of
+tuning parameters.</p>
+<p>Here, we showed the output MSE with corresponding tuning parameters,
+sorted smallest to largest:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">df_sorted</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="s1">&#39;result/df_sorted.h5&#39;</span><span class="p">,</span> <span class="s1">&#39;df_sorted&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Sorted MSE and corresponding parameters: small to big&quot;</span><span class="p">)</span>
+<span class="n">df_sorted</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Sorted MSE and corresponding parameters: small to big
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[23]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mse</th>
+      <th>parameters</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>4</th>
+      <td>0.748335</td>
+      <td>50.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.749202</td>
+      <td>40.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.749553</td>
+      <td>20.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.749811</td>
+      <td>30.0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.749885</td>
+      <td>60.0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>0.750014</td>
+      <td>70.0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>0.751435</td>
+      <td>80.0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>0.753058</td>
+      <td>90.0</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>0.753077</td>
+      <td>10.0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>0.753630</td>
+      <td>100.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>And the trend of MSE by tuning parameter is plotted:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;The minimum MSE is&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">df_sorted</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;with tuning parameter =&quot;</span><span class="p">,</span> <span class="n">df_sorted</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+The minimum MSE is 0.7483 with tuning parameter = 50.0
+</pre></div></div>
+</div>
+<p>We observe that the multinomial logistic regression performs reasonably
+well. The cross-validated mean square error (MSE) is 0.748. It means
+that TF-IDF statistics from the reviews have explanatory and predictive
+powers of customers’ ratings of restaurants.</p>
+</div>
+</div>
+<div class="section" id="Conclusion">
+<h2>Conclusion<a class="headerlink" href="#Conclusion" title="Permalink to this headline">¶</a></h2>
+<p>In this project, we have found the topics of Yelp customers reviews by
+LDA and then used the topics probabilities to predict the customer’s
+ratings. LDA has selected 10 different topics from our training set, and
+these topics reflect different parts of the restaurants, such as
+location, service, drinks, and types of food. However, topic
+probabilities of reviews do not have good predictive powers of
+customers’ ratings of restaurants. Thus, in order to predict customers’
+ratings, we also investigate how multinomial logistic regression
+performs with TF-IDF statistics from the reviews. The result shows that
+TF-IDF statistics from the reviews have better explanatory and
+predictive powers than LDA topics.</p>
+<p>Since the time is limited, there are a lot of improvements we can make
+in our analysis. For instance, we can choose more parameters to tune
+while we apply LDA, in order to find more interpretable topics. Also, we
+can take a look at the data from another state to see the topics
+difference among different states. Furthermore, trying more machine
+learning models in predicting customer’s ratings from the reviews can be
+interesting too.</p>
+</div>
+<div class="section" id="Author-Contributions">
+<h2>Author Contributions<a class="headerlink" href="#Author-Contributions" title="Permalink to this headline">¶</a></h2>
+<p>This repository and project is the collaboration from <strong>Ningning Long</strong>,
+<strong>Yue You</strong> and <strong>Tian Xia</strong>. Their contributions to the project are
+summarized as:</p>
+<p><strong>Ningning Long</strong>: - ‘LDA.ipynb’, latent dirichelet allocation modeling
+and analysis - ‘environment.yml’ - Some write-up of ‘main.ipynb’</p>
+<p><strong>Yue You</strong>: - ‘Logistic.ipynb’, statistical modeling of multinomial
+logistic regression - ‘.gitignore’ - Some write-up of ‘main.ipynb’</p>
+<p><strong>Tian Xia</strong>: - ‘Data_Cleaning.ipynb’, data extraction and cleaning -
+‘README.md’ - Some write-up of ‘main.ipynb’ - ‘LICENSE.md’ - ‘Makefile’</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Ohio-Yelp-Review-Analysis</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Modeling on Ohio's Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Modeling on Ohio’s Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Data_Cleaning.html">Extract Restaurants Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Data_Cleaning.html#Extract-Reviews-for-Restaurants">Extract Reviews for Restaurants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LDA.html">Topics Analysis with Latent Dirichelet Allocation (LDA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Logistic.html">Logestic Regression Modeling with Cross Validation on Word Frequecy</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="README.html" title="previous chapter">Modeling on Ohio's Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a></li>
+      <li>Next: <a href="Data_Cleaning.html" title="next chapter">Extract Restaurants Data</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Tian Xia, Ningning Long, Yue You.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/main.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

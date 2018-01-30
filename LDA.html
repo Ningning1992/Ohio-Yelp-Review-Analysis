@@ -1,0 +1,1030 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Topics Analysis with Latent Dirichelet Allocation (LDA) &#8212; Ohio-Yelp-Review-Analysis 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Logestic Regression Modeling with Cross Validation on Word Frequecy" href="Logistic.html" />
+    <link rel="prev" title="Extract Restaurants Data" href="Data_Cleaning.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+</style>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># import necessary packages</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="kn">import</span> <span class="n">stopwords</span>
+<span class="kn">from</span> <span class="nn">nltk.stem.porter</span> <span class="kn">import</span> <span class="n">PorterStemmer</span>
+<span class="kn">from</span> <span class="nn">gensim</span> <span class="kn">import</span> <span class="n">corpora</span>
+<span class="kn">from</span> <span class="nn">gensim</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">import</span> <span class="nn">nltk</span>
+<span class="kn">from</span> <span class="nn">sklearn.externals</span> <span class="kn">import</span> <span class="n">joblib</span>
+<span class="kn">from</span> <span class="nn">nltk.tag</span> <span class="kn">import</span> <span class="n">pos_tag</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span>
+<span class="kn">import</span> <span class="nn">shelve</span>
+
+
+</pre></div>
+</div>
+</div>
+<div class="section" id="Topics-Analysis-with-Latent-Dirichelet-Allocation-(LDA)">
+<h1>Topics Analysis with Latent Dirichelet Allocation (LDA)<a class="headerlink" href="#Topics-Analysis-with-Latent-Dirichelet-Allocation-(LDA)" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="Read-in-the-data">
+<h2>Read in the data<a class="headerlink" href="#Read-in-the-data" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># read the data</span>
+<span class="n">review</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/reviews.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Text-Manipulation">
+<h2>Text Manipulation<a class="headerlink" href="#Text-Manipulation" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [119]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># we focus on the text column (the reviews provided by customers)</span>
+<span class="n">raw_all</span> <span class="o">=</span> <span class="n">review</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="n">first_review_train</span> <span class="o">=</span> <span class="n">raw_all</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="n">first_review_train</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Wished it was better..
+After watching man vs. food I decided to stop by, décor was not that homey and welcoming, and the neighborhood was bad, but nothing I haven&#39;t been around before.  The ribs were very fatty and grisly, it was disappointing and I didn&#39;t get enough sauce and when I asked for a little more they wanted to charge me, the coleslaw was awesome!  I noticed a hair in my food and it turned me off to the rest of it, so i threw it away , I wont be returning...
+sorry guys
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [120]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">with</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;result/first_review_train&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">result</span><span class="p">:</span>
+    <span class="n">result</span><span class="p">[</span><span class="s1">&#39;first_review_train&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">first_review_train</span>
+</pre></div>
+</div>
+</div>
+<p>As the review example shown above, we extract the text column, which
+contains the raw reviews from customers.</p>
+<p>In order to tokenize the reviews, we first change all the words in each
+review as the lower case for convenience in the topic analysis. Then, we
+apply some string manipulation in order to save the meaningful words and
+numbers. Next, we delete all the stop words from each review, which are
+certain parts of English speech, like (for, or) or the words that are
+meaningless to the topic model. Finally, we decide to only keep the
+words that are the noun for further analysis.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">tokenize_text</span><span class="p">(</span><span class="n">raw</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    function to get the tokenized list of reviews from the raw reviews</span>
+
+<span class="sd">    Input</span>
+<span class="sd">    ----------</span>
+<span class="sd">    raw: a list of review text</span>
+
+<span class="sd">    Output</span>
+<span class="sd">    ------</span>
+<span class="sd">    text_array: a list of tokenized review word sets</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># define the stopwords</span>
+    <span class="n">stop</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">&#39;english&#39;</span><span class="p">))</span>
+
+    <span class="n">text_array</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">raw</span><span class="p">)):</span>
+        <span class="c1"># for each review, change the words to lowercase</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="c1"># get rid of \r and \n for each string</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\r\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
+
+        <span class="c1"># get rid of all the elements that are not characters or numbers</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;[^a-z0-9]&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+
+        <span class="c1"># Tokenization segments a document into its atomic elements.</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+        <span class="c1"># delete stop words</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">words</span> <span class="k">if</span> <span class="n">j</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stop</span><span class="p">]</span>
+
+        <span class="c1"># only keep the words that are noun, since we only need to find the subtopics</span>
+        <span class="n">tagged_sent</span> <span class="o">=</span> <span class="n">pos_tag</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="p">[</span><span class="n">word</span> <span class="k">for</span> <span class="n">word</span><span class="p">,</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">tagged_sent</span> <span class="k">if</span> <span class="n">pos</span> <span class="o">==</span> <span class="s1">&#39;NN&#39;</span><span class="p">]</span>
+
+        <span class="n">text_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">words</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">text_array</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">text_array</span> <span class="o">=</span> <span class="n">tokenize_text</span><span class="p">(</span><span class="n">raw_all</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>The <strong>text_array</strong> contains all the tokenized reviews in our data set.
+Then, we use the Dictionary() function to traverse texts, assigning a
+unique integer id to each unique token while also collecting word counts
+and relevant statistics. To see each token’s unique integer id, try
+<strong>print(dictionary.token2id)</strong></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># save the dictionary results</span>
+<span class="n">dictionary</span> <span class="o">=</span> <span class="n">corpora</span><span class="o">.</span><span class="n">Dictionary</span><span class="p">(</span><span class="n">text_array</span><span class="p">)</span>
+<span class="n">dictionary</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;result/dictionary.dic&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># save the text_array</span>
+<span class="k">with</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;result/text_array&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">result</span><span class="p">:</span>
+    <span class="n">result</span><span class="p">[</span><span class="s1">&#39;text_array&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text_array</span>
+</pre></div>
+</div>
+</div>
+<p>Next, we use doc2bow() function converts dictionary into a bag-of-words.
+The result, corpus, is a list of vectors equal to the number of
+documents. Each document list is a series of tuples.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">corpus</span> <span class="o">=</span> <span class="p">[</span><span class="n">dictionary</span><span class="o">.</span><span class="n">doc2bow</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">text_array</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">print</span><span class="p">(</span><span class="n">dictionary</span><span class="o">.</span><span class="n">token2id</span><span class="p">[</span><span class="s1">&#39;man&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+0
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">print</span><span class="p">(</span><span class="n">corpus</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[(0, 1), (1, 1), (2, 2), (3, 1), (4, 1), (5, 1), (6, 1), (7, 1), (8, 1), (9, 1), (10, 1), (11, 1), (12, 1), (13, 1), (14, 1)]
+</pre></div></div>
+</div>
+<p>The above list of tuples represents our first document (i.e. the first
+review after tokenizing). The tuples are (term ID, term frequency)
+pairs, so we can see that <strong>dictionary.token2id[‘man’]</strong> says “man”’s
+integer id is 0, then the first tuple indicates that “man” appears once
+in the first tokenized review document. <strong>doc2bow()</strong> only includes
+terms that actually occur: terms that do not occur in a document will
+not appear in that document’s vector.</p>
+</div>
+<div class="section" id="Training-Set-and-Validation-Set">
+<h2>Training Set and Validation Set<a class="headerlink" href="#Training-Set-and-Validation-Set" title="Permalink to this headline">¶</a></h2>
+<p>Then, in order to split data set into a training set and a validation
+set, let’s find the restaurant that has the largest number of reviews.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">business</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/restaurant.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [18]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># choose the business with the max review_count</span>
+<span class="n">example_business</span> <span class="o">=</span> <span class="n">business</span><span class="o">.</span><span class="n">business_id</span><span class="p">[</span><span class="n">business</span><span class="o">.</span><span class="n">review_count</span> <span class="o">==</span> <span class="nb">max</span><span class="p">(</span><span class="n">business</span><span class="o">.</span><span class="n">review_count</span><span class="p">)]</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">business</span><span class="o">.</span><span class="n">review_count</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+896
+</pre></div></div>
+</div>
+<p>We decide to set the validation set as the 896 reviews from the
+restaurant that has the largest number of reviews. Then, the rest of the
+reviews are considered as training set.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># validation set</span>
+<span class="n">bool_list_vali</span> <span class="o">=</span> <span class="n">review</span><span class="p">[</span><span class="s1">&#39;business_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">example_business</span><span class="p">)</span>
+<span class="n">review_example</span> <span class="o">=</span> <span class="n">review</span><span class="p">[</span><span class="n">bool_list_vali</span><span class="p">]</span>
+<span class="n">vali_index</span> <span class="o">=</span> <span class="n">review_example</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="n">vali_corpus</span> <span class="o">=</span> <span class="p">[</span><span class="n">corpus</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">vali_index</span><span class="p">]</span>
+
+<span class="c1"># training set</span>
+<span class="n">bool_list_train</span> <span class="o">=</span> <span class="p">[</span><span class="ow">not</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">bool_list_vali</span><span class="p">]</span>
+<span class="n">review_train</span> <span class="o">=</span> <span class="n">review</span><span class="p">[</span><span class="n">bool_list_train</span><span class="p">]</span>
+<span class="n">train_index</span> <span class="o">=</span> <span class="n">review_train</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+<span class="n">train_corpus</span> <span class="o">=</span> <span class="p">[</span><span class="n">corpus</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">train_index</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Latent-Dirichelet-Allocation-Model">
+<h2>Latent Dirichelet Allocation Model<a class="headerlink" href="#Latent-Dirichelet-Allocation-Model" title="Permalink to this headline">¶</a></h2>
+<p>To discover latent topics in each review, we use Latent Dirichlet
+Allocation (LDA), a topic model that generates topics based on word
+frequency from a set of documents. LDA assumes that (1) documents
+contain multiple latent topics; (2) each document is assumed to be
+generated by a generative process defined by probabilistic model; and
+(3) each topic is characterized by a distribution over a fixed
+vocabulary. More specically, the joint distribution of the hidden topics
+and observed variables (words) is:</p>
+<div class="math">
+\[p(\phi_{1:K}, \theta_{1:D}, Z_{1:D}, W_{1:D} ) = \prod_{i=1}^K p(\phi_{i}) \prod_{d=1}^D p(\theta_{d}) \prod_{n=1}^N p(Z_{d,n}|\theta_{d}) p(W_{d,n}|\phi_{1:K}, Z_{d,n})\]</div>
+<p>where</p>
+<div class="math">
+\[\phi_{1:K}: the\ topics, each\ \phi_k\ is\ a\ distribution\ over\ the\ vocabulary\ ; \phi_{k}\sim Dirichlet_V(\beta)\]</div>
+<div class="math">
+\[\theta_{1:D}: the\ topic\ proportion\ for\ document\ 1:D;\ \theta_d \sim Dirichlet_K(\alpha)\]</div>
+<div class="math">
+\[Z_{1:D}: the\ topic\ assignments\ for\ document\ 1:D;\ Z_d \sim Multinomial_K(\theta_d)\]</div>
+<div class="math">
+\[W_{1:D}: the\ observed\ words\ for\ document\ 1:D;\ W_d \sim Multinomial_V(\phi_z)\]</div>
+<p>LDA learns the distributions (e.g. the distribution of a set of topics,
+their associated word probabilities, the topic of each word, and the
+particular topic mixture of each document) by using Bayesian inference.
+After repeating the updating process for a large number of times, the
+model will reach a steady state and can be used to estimate the hidden
+topics, topic mixtures of each document and the words associated with
+each topic.</p>
+<p>We use the <strong>LdaModel</strong> in gensim package to apply the LDA model to our
+training set.</p>
+<p>The <strong>LdaModel</strong> class is described in detail in the gensim
+documentation. Parameters used in our example are:</p>
+<p><strong>num_topics</strong>: required. An LDA model requires the user to determine
+how many topics should be generated. We tried 6, 8, 10, 12, 15 as
+num_topics, and it looks like that num_topics=10 works the best. Thus,
+we only fit the model with num_topic=10, and save the model for further
+analysis.</p>
+<p><strong>id2word</strong>: required. The LdaModel class requires our previous
+dictionary to map ids to strings.</p>
+<p><strong>passes</strong>: optional. The number of laps that the model will take
+through corpus. The greater the number of passes, the more accurate the
+model will be. A lot of passes can be slow on a very large corpus.</p>
+<p><strong>random_state</strong>: optional. It is similar to random seed. Controlling
+random_state can make sure the result is the same every time we run the
+model</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># fit lda model</span>
+<span class="n">ldamodel</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ldamodel</span><span class="o">.</span><span class="n">LdaModel</span><span class="p">(</span><span class="n">train_corpus</span><span class="p">,</span> <span class="n">num_topics</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">id2word</span><span class="o">=</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">passes</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">259</span><span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [17]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># save the lda model</span>
+<span class="n">filepath</span> <span class="o">=</span> <span class="s1">&#39;result/finalized_model_10.sav&#39;</span>
+<span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">ldamodel</span><span class="p">,</span> <span class="n">filepath</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[17]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[&#39;result/finalized_model_10.sav&#39;]
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">ldamodel</span><span class="o">.</span><span class="n">print_topics</span><span class="p">(</span><span class="n">num_topics</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">num_words</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[21]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[(0,
+  &#39;0.109*&quot;food&quot; + 0.075*&quot;place&quot; + 0.040*&quot;service&quot; + 0.024*&quot;time&quot; + 0.020*&quot;restaurant&quot; + 0.016*&quot;menu&quot; + 0.013*&quot;staff&quot; + 0.012*&quot;everything&quot;&#39;),
+ (1,
+  &#39;0.047*&quot;pizza&quot; + 0.028*&quot;place&quot; + 0.017*&quot;cleveland&quot; + 0.011*&quot;time&quot; + 0.010*&quot;way&quot; + 0.009*&quot;line&quot; + 0.009*&quot;root&quot; + 0.009*&quot;home&quot;&#39;),
+ (2,
+  &#39;0.052*&quot;food&quot; + 0.035*&quot;time&quot; + 0.034*&quot;service&quot; + 0.019*&quot;experience&quot; + 0.018*&quot;order&quot; + 0.018*&quot;night&quot; + 0.015*&quot;place&quot; + 0.015*&quot;restaurant&quot;&#39;),
+ (3,
+  &#39;0.018*&quot;sauce&quot; + 0.015*&quot;salad&quot; + 0.014*&quot;flavor&quot; + 0.014*&quot;dinner&quot; + 0.013*&quot;pork&quot; + 0.013*&quot;chicken&quot; + 0.013*&quot;meal&quot; + 0.011*&quot;cream&quot;&#39;),
+ (4,
+  &#39;0.055*&quot;thai&quot; + 0.037*&quot;sushi&quot; + 0.035*&quot;spicy&quot; + 0.032*&quot;rice&quot; + 0.030*&quot;roll&quot; + 0.025*&quot;tea&quot; + 0.024*&quot;curry&quot; + 0.020*&quot;shrimp&quot;&#39;),
+ (5,
+  &#39;0.086*&quot;coffee&quot; + 0.069*&quot;breakfast&quot; + 0.054*&quot;brunch&quot; + 0.027*&quot;bacon&quot; + 0.020*&quot;egg&quot; + 0.019*&quot;toast&quot; + 0.018*&quot;morning&quot; + 0.018*&quot;hash&quot;&#39;),
+ (6,
+  &#39;0.066*&quot;beef&quot; + 0.030*&quot;pho&quot; + 0.026*&quot;pork&quot; + 0.025*&quot;soup&quot; + 0.020*&quot;cleveland&quot; + 0.016*&quot;bowl&quot; + 0.014*&quot;pot&quot; + 0.014*&quot;meat&quot;&#39;),
+ (7,
+  &#39;0.067*&quot;beer&quot; + 0.053*&quot;place&quot; + 0.047*&quot;bar&quot; + 0.047*&quot;food&quot; + 0.034*&quot;selection&quot; + 0.020*&quot;service&quot; + 0.018*&quot;night&quot; + 0.017*&quot;cleveland&quot;&#39;),
+ (8,
+  &#39;0.043*&quot;sandwich&quot; + 0.034*&quot;wife&quot; + 0.028*&quot;bbq&quot; + 0.024*&quot;dog&quot; + 0.020*&quot;meat&quot; + 0.019*&quot;melt&quot; + 0.017*&quot;beef&quot; + 0.017*&quot;chicken&quot;&#39;),
+ (9,
+  &#39;0.109*&quot;burger&quot; + 0.051*&quot;hour&quot; + 0.030*&quot;bar&quot; + 0.023*&quot;tacos&quot; + 0.023*&quot;bartender&quot; + 0.022*&quot;spot&quot; + 0.019*&quot;b&quot; + 0.015*&quot;taco&quot;&#39;)]
+</pre></div>
+</div>
+</div>
+<p>The LDA model finds the 10 topics with 8 highest frequent words in each
+topic. The 10 topics are relatively interpretable. By associating and
+categorizing the high-frequency words of each topic, we name the topics
+as the following:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [24]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">topic_dict</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span><span class="s2">&quot;Service1&quot;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="s2">&quot;Location&quot;</span><span class="p">,</span><span class="mi">2</span><span class="p">:</span><span class="s2">&quot;Service2&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="s2">&quot;American1&quot;</span><span class="p">,</span>
+                 <span class="mi">4</span><span class="p">:</span><span class="s2">&quot;Asian1&quot;</span><span class="p">,</span><span class="mi">5</span><span class="p">:</span><span class="s2">&quot;Breakfast&quot;</span><span class="p">,</span><span class="mi">6</span><span class="p">:</span><span class="s2">&quot;Asian2&quot;</span><span class="p">,</span><span class="mi">7</span><span class="p">:</span><span class="s2">&quot;Bar&quot;</span><span class="p">,</span><span class="mi">8</span><span class="p">:</span><span class="s2">&quot;American2&quot;</span><span class="p">,</span><span class="mi">9</span><span class="p">:</span><span class="s2">&quot;Mexican&quot;</span><span class="p">}</span>
+<span class="k">for</span> <span class="n">keys</span><span class="p">,</span><span class="n">values</span> <span class="ow">in</span> <span class="n">topic_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">((</span><span class="n">keys</span><span class="p">,</span> <span class="n">values</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(0, &#39;Service1&#39;)
+(1, &#39;Location&#39;)
+(2, &#39;Service2&#39;)
+(3, &#39;American1&#39;)
+(4, &#39;Asian1&#39;)
+(5, &#39;Breakfast&#39;)
+(6, &#39;Asian2&#39;)
+(7, &#39;Bar&#39;)
+(8, &#39;American2&#39;)
+(9, &#39;Mexican&#39;)
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [122]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># save the names of the topics</span>
+<span class="k">with</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;result/topic_name&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">result</span><span class="p">:</span>
+    <span class="n">result</span><span class="p">[</span><span class="s1">&#39;topic_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">topic_dict</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Further-Interpretation-of-Topics-with-A-Review">
+<h2>Further Interpretation of Topics with A Review<a class="headerlink" href="#Further-Interpretation-of-Topics-with-A-Review" title="Permalink to this headline">¶</a></h2>
+<p>Let’s take a look at an original review from the validation set.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [36]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">print</span><span class="p">(</span><span class="n">review_example</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">][</span><span class="mi">35868</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+If I didn&#39;t have to pay the bill, I&#39;d enjoy this restaurant a lot more.
+
+Yea, yea, I know -- I could say that about any place. But this one seems to fit that statement more than almost any other in Cleveland.
+
+Two burgers -- perfectly cooked and well seasoned with just the right amount of salt and other mouth-watering dashes of spice (plus the bun was nicely seasoned, something that many burger joints neglect). A decent side of fries. About a dozen chicken wings -- Falling off the bone and &#34;Chef-ed up&#34; with lemon juice, scallions, jalapeno and garlic, not simply smothered in a thick reddish-orange sauce.
+
+But why does all of that still have to cost $50? (And those were some of the least expensive items on the menu).
+
+Nevertheless, the drinks were great -- I had two different unique takes on the Old-Fashioned (who would have thought that Curacao works with Bourbon) and Jeannene had a new spin on the French 75 before trying one of the Old-Fashioneds -- and they were well worth another $50.
+
+Coupled with attentive service and a great patio seating on E. 4th Street, I am happy to give it four stars. But the prices seem to promise a 5-star experience.
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [123]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># save the first raw review of validation set</span>
+<span class="k">with</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;result/first_review_vali&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">result</span><span class="p">:</span>
+    <span class="n">result</span><span class="p">[</span><span class="s1">&#39;first_review_vali&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">review_example</span><span class="p">[</span><span class="s1">&#39;text&#39;</span><span class="p">][</span><span class="mi">35868</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>Then, let’s see the topics probability associated with this review.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [89]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">all_topics</span><span class="o">=</span><span class="p">[]</span>
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">vali_corpus</span><span class="p">:</span>
+    <span class="n">topics</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sorted</span><span class="p">(</span><span class="n">ldamodel</span><span class="p">[</span><span class="n">doc</span><span class="p">],</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)]</span>
+    <span class="n">all_topics</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">topics</span><span class="p">)</span>
+
+<span class="n">all_topics</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[89]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[(2, 0.29715302229392604),
+ (0, 0.24879956111281701),
+ (9, 0.21169559380609276),
+ (3, 0.16659952745901788),
+ (4, 0.057228951701560421)]
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [124]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># save the topics probability of the first review in validation set</span>
+<span class="k">with</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;result/first_review_topics_vali&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">result</span><span class="p">:</span>
+    <span class="n">result</span><span class="p">[</span><span class="s1">&#39;first_review_topics_vali&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_topics</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<p>Topics 0 and 2 are the service topics. Topic 9, 3, and 4 represent
+Mexican food, American food, and Asian food respectively. We can see the
+topics are relatively reasonable, since the review talks a lot about the
+service and the service topics have the highest probability in this
+review. However, according to the review, the restaurant seems to be an
+American restaurant, but Mexican food topic has the highest probability
+among the 3 topics talking about food. It shows that the topics modeling
+may not be perfect to describe every part of the restaurant.</p>
+<p>Thus, we do not have a high expectation about the prediction accuracy
+for customer ratings according to the topics, and the next section
+confirms our concern.</p>
+</div>
+<div class="section" id="Customer-Rating-Prediction-with-Topics">
+<h2>Customer Rating Prediction with Topics<a class="headerlink" href="#Customer-Rating-Prediction-with-Topics" title="Permalink to this headline">¶</a></h2>
+<p>In this section, we are trying to use the topics probability found by
+LDA model to predict the rating given by the customers. Traditional
+linear regression is applied here, in order to see if the topics from a
+review are highly associated with the customer rating.</p>
+<p>First, we use the probability of each topics as the elements of the
+design matrix.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [90]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">design_matrix_creation</span><span class="p">(</span><span class="n">n_topics</span><span class="p">,</span> <span class="n">topics_prob_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    function to get the design matrix for linear regression from the LDA topics</span>
+
+<span class="sd">    Input</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n_topics: number of LDA topics</span>
+<span class="sd">    topics_prob_list: a list of tuples with the LDA topics and its corresponding probability in each review</span>
+
+<span class="sd">    Output</span>
+<span class="sd">    ------</span>
+<span class="sd">    design_matrix: a matrix containing the LDA topics probability in each review as an observation</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nrows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">topics_prob_list</span><span class="p">)</span>
+    <span class="n">design_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrows</span><span class="p">,</span> <span class="n">n_topics</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrows</span><span class="p">):</span>
+        <span class="n">items</span> <span class="o">=</span>  <span class="n">topics_prob_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
+            <span class="n">topic_prob</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">design_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">topic_prob</span>
+    <span class="k">return</span> <span class="n">design_matrix</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [91]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># get the design matrix for the validation set</span>
+<span class="n">design_matrix</span> <span class="o">=</span> <span class="n">design_matrix_creation</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">all_topics</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>After creating the design matrix, we decide to merge few topics
+together, since they reflect the similar contents. We merge topics 0 and
+2 together, since they both reflect the service of the restaurants.
+Topic 3 and 8 are merged, because they both represent American food.
+Finally, topic 4 and 6 are merged, since they are both Asian food
+topics. Thus, the design matrix eventually has 7 different features. Our
+response variable is the customer ratings.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [94]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># merge the similar topics</span>
+<span class="n">design_matrix</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="n">design_matrix</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+<span class="n">design_matrix</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">+=</span> <span class="n">design_matrix</span><span class="p">[:,</span> <span class="mi">8</span><span class="p">]</span>
+<span class="n">design_matrix</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">+=</span> <span class="n">design_matrix</span><span class="p">[:,</span> <span class="mi">6</span><span class="p">]</span>
+
+<span class="n">design_matrix</span> <span class="o">=</span> <span class="n">design_matrix</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">9</span><span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [95]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># Create linear regression object</span>
+<span class="n">regr</span> <span class="o">=</span> <span class="n">LinearRegression</span><span class="p">()</span>
+
+<span class="c1"># Train the model using the training sets</span>
+<span class="n">regr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">design_matrix</span><span class="p">,</span> <span class="n">review_example</span><span class="o">.</span><span class="n">stars</span><span class="p">)</span>
+
+
+<span class="c1"># The mean squared error</span>
+<span class="n">mse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">regr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">design_matrix</span><span class="p">)</span> <span class="o">-</span> <span class="n">review_example</span><span class="o">.</span><span class="n">stars</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [125]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">lm_result</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Coefficients&#39;</span><span class="p">:</span> <span class="n">regr</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="s1">&#39;Intercept&#39;</span><span class="p">:</span> <span class="n">regr</span><span class="o">.</span><span class="n">intercept_</span><span class="p">,</span> <span class="s2">&quot;Mean squared error&quot;</span><span class="p">:</span> <span class="n">mse</span><span class="p">}</span>
+
+<span class="c1"># save the linear regression result</span>
+<span class="k">with</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;result/lm_result&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">result</span><span class="p">:</span>
+    <span class="n">result</span><span class="p">[</span><span class="s1">&#39;lm_result&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lm_result</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [128]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">for</span> <span class="n">keys</span><span class="p">,</span><span class="n">values</span> <span class="ow">in</span> <span class="n">lm_result</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Coefficients
+[-3.37275057 -2.04183867 -2.21252578 -1.61272055 -1.7564765  -1.5980306
+ -3.56868465]
+Intercept
+6.27726471738
+Mean squared error
+1.6797105653141962
+</pre></div></div>
+</div>
+<p>We apply MSE (Mean Squared Error) as a metric of accuracy, as the
+original ratings are integers and predicted ratings are float numbers.
+From the above result, we can see that the MSE is pretty high, which
+means using the topics probability to predict customer ratings is not
+very accurate for our data. Therefore, another supervised learning
+model—Multinomial Logistic Regression is applied to the data as well.
+The analysis and results can be found in another notebook.</p>
+</div>
+<div class="section" id="Testing">
+<h2>Testing<a class="headerlink" href="#Testing" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [115]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">test_tokenize_text_input</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Test that if the input is not a list of string, raise attribute error&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">file</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+        <span class="n">tokenize_text</span><span class="p">(</span><span class="nb">file</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">False</span>
+
+
+<span class="k">def</span> <span class="nf">test_tokenize_text_output</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Test that the output of tokenize_text is a list containing lists of string. &quot;&quot;&quot;</span>
+
+    <span class="nb">file</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Today is a sunny day&quot;</span><span class="p">,</span> <span class="s2">&quot;I meet Eli at Evans&quot;</span><span class="p">]</span>
+    <span class="n">obs</span> <span class="o">=</span> <span class="n">tokenize_text</span><span class="p">(</span><span class="nb">file</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">text_list</span> <span class="ow">in</span> <span class="n">obs</span><span class="p">:</span>
+        <span class="n">obs1</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="n">exp1</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">assert</span> <span class="n">obs1</span> <span class="o">==</span> <span class="n">exp1</span>
+
+        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">text_list</span><span class="p">:</span>
+            <span class="n">obs2</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="n">exp2</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">assert</span> <span class="n">obs2</span> <span class="o">==</span> <span class="n">exp2</span>
+
+
+<span class="k">def</span> <span class="nf">test_design_matrix_creation_input</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Test that when input n_topics is not an integer, raise type error&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">topic_prob</span> <span class="o">=</span> <span class="p">[[(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">)]]</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">design_matrix_creation</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="n">topic_prob</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">False</span>
+
+
+<span class="k">def</span> <span class="nf">test_design_matrix_creation_output</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Test that the design matrix has the right dimension. &quot;&quot;&quot;</span>
+    <span class="n">topic_prob</span> <span class="o">=</span> <span class="p">[[(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)],</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">)]]</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">design_matrix_creation</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">topic_prob</span><span class="p">)</span>
+    <span class="n">obs1</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">obs2</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">exp1</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">exp2</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="k">assert</span> <span class="n">obs1</span> <span class="o">==</span> <span class="n">exp1</span>
+    <span class="k">assert</span> <span class="n">obs2</span> <span class="o">==</span> <span class="n">exp2</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [117]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">test_tokenize_text_input</span><span class="p">()</span>
+<span class="n">test_tokenize_text_output</span><span class="p">()</span>
+<span class="n">test_design_matrix_creation_input</span><span class="p">()</span>
+<span class="n">test_design_matrix_creation_output</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Ohio-Yelp-Review-Analysis</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Modeling on Ohio's Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">Modeling on Ohio’s Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Data_Cleaning.html">Extract Restaurants Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Data_Cleaning.html#Extract-Reviews-for-Restaurants">Extract Reviews for Restaurants</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Topics Analysis with Latent Dirichelet Allocation (LDA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Logistic.html">Logestic Regression Modeling with Cross Validation on Word Frequecy</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="Data_Cleaning.html" title="previous chapter">Extract Restaurants Data</a></li>
+      <li>Next: <a href="Logistic.html" title="next chapter">Logestic Regression Modeling with Cross Validation on Word Frequecy</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Tian Xia, Ningning Long, Yue You.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/LDA.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

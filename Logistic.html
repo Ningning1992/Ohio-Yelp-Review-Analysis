@@ -1,0 +1,790 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Logestic Regression Modeling with Cross Validation on Word Frequecy &#8212; Ohio-Yelp-Review-Analysis 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Topics Analysis with Latent Dirichelet Allocation (LDA)" href="LDA.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+</style>
+<div class="section" id="Logestic-Regression-Modeling-with-Cross-Validation-on-Word-Frequecy">
+<h1>Logestic Regression Modeling with Cross Validation on Word Frequecy<a class="headerlink" href="#Logestic-Regression-Modeling-with-Cross-Validation-on-Word-Frequecy" title="Permalink to this headline">¶</a></h1>
+<p>As we have seen from the previous notebook, topic probabilities of
+reviews do not have good predictive powers of customers’ ratings of
+restaurants. Thus, in this notebook, we investigate how multinomial
+logistic regression performs. We will calculate the TF-IDF statistics
+from the reviews and use them to predict customers’ ratings.</p>
+<div class="section" id="Part-1:-load-dependencies-and-read-data">
+<h2>Part 1: load dependencies and read data<a class="headerlink" href="#Part-1:-load-dependencies-and-read-data" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">TfidfVectorizer</span>
+<span class="kn">from</span> <span class="nn">sklearn.feature_selection</span> <span class="kn">import</span> <span class="n">SelectKBest</span><span class="p">,</span><span class="n">chi2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">KFold</span>
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">scipy.sparse</span>
+<span class="kn">import</span> <span class="nn">random</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># set the seed</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">259</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># load the data</span>
+<span class="n">review</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;data/reviews.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Part-2:-Term-Frequency---Inverse-Document-Frequenc-(TF-IDF)-Transformation">
+<h2>Part 2: <em>Term Frequency - Inverse Document Frequenc (TF-IDF)</em> Transformation<a class="headerlink" href="#Part-2:-Term-Frequency---Inverse-Document-Frequenc-(TF-IDF)-Transformation" title="Permalink to this headline">¶</a></h2>
+<p>TF-IDF means “Term Frequency - Inverse Document Frequency”. It is a
+powerful technique to detect important words in a collection of
+documents. “Term Frequency” (TF) meansures the frequency of word
+<span class="math">\(w_i\)</span> in document <span class="math">\(d_j\)</span>, and the “Inverse Document
+Frequency” (IDF) measures how much information the word provides, i.e.,
+the frequency of word <span class="math">\(w_i\)</span> in the collection of documents. The
+TF-IDF value for a word <span class="math">\(w_i\)</span> in document <span class="math">\(d_j\)</span> is
+positively associated with word frequencies and negatively associated
+with document frequencies. The math formula for TF-IDF is:</p>
+<div class="math">
+\[TF-IDF(w_i, d_j) = TF(w_i, d_j) \times IDF(w_i)\]</div>
+<p>And IDF can be smoothed using the formula:</p>
+<div class="math">
+\[IDF_{smooth}(w_i) = log(\frac{N}{1 + n_i})\]</div>
+<p>where <span class="math">\(N\)</span> is the number of documents considered and <span class="math">\(n_i\)</span> is
+the frequency of <span class="math">\(w_i\)</span> in the all documents considered.</p>
+<p>In this project, TF-IDF is used in logistic regression classification.
+In the following analysis, we did several steps to fit the best logistic
+regression model:</p>
+<ol class="arabic simple">
+<li>constructed the TF-IDF matrix,</li>
+<li>used <span class="math">\(\chi^2\)</span> independent test to select top <span class="math">\(1,000\)</span>
+keywords from training set,</li>
+<li>computed the TF-IDF values of the <span class="math">\(1,000\)</span> keywords,</li>
+<li>splited the whole dataset into training set and validation set using
+10-fold cross-valudation,</li>
+<li>used the <em>TF-IDF values</em> as covariates, the <em>star values</em> of review
+(ratings) as responses, to build a logistic regression model in the
+training set,</li>
+<li>tried 3 different tuning parameters respectively,</li>
+<li>applied the models built in training set to validation set and
+obtained the predicted <em>star values</em> for each tuning parameter,</li>
+<li>computed the Mean Squared Error (MSE) between true <em>star value</em> and
+predicted <em>star value</em> in validation set,</li>
+<li>and chose the optimal tuning parameters which produces lowest MSE.</li>
+</ol>
+<div class="section" id="construct-the-TF-IDF-matrix">
+<h3>construct the TF-IDF matrix<a class="headerlink" href="#construct-the-TF-IDF-matrix" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># make raw dataset into the format for TF-idf transformation</span>
+<span class="n">star</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">review</span><span class="o">.</span><span class="n">stars</span><span class="p">)</span>
+<span class="n">text</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">n&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">),</span> <span class="n">review</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
+<span class="n">pat</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[^\w\s]&quot;</span><span class="p">)</span>
+<span class="n">text_clean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">pat</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="n">text</span><span class="p">)))</span>
+
+<span class="c1"># create TF-IDF</span>
+<span class="n">vectorizer</span> <span class="o">=</span> <span class="n">TfidfVectorizer</span><span class="p">(</span><span class="n">stop_words</span> <span class="o">=</span> <span class="s2">&quot;english&quot;</span><span class="p">)</span>
+<span class="n">text_features</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">text_clean</span><span class="p">)</span>
+<span class="n">vocab</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="o">.</span><span class="n">get_feature_names</span><span class="p">()</span>
+<span class="c1"># save</span>
+<span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">save_npz</span><span class="p">(</span><span class="s1">&#39;result/text_features.npz&#39;</span><span class="p">,</span> <span class="n">text_features</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;result/star&#39;</span><span class="p">,</span> <span class="n">star</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;Number of observations in the text_features dataset is&quot;</span><span class="p">,</span> <span class="n">text_features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+      <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Number of covariates in the text_features dataset is&quot;</span><span class="p">,</span> <span class="n">text_features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Number of observations in the text_features dataset is 60222
+Number of covariates in the text_features dataset is 50137
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;The format of text_feature is</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">text_features</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:])</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;The format of star is</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">star</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+The format of text_feature is
+   (0, 17785)   0.060146376659
+  (0, 19534)    0.0664307345244
+  (0, 37080)    0.0971322128585
+  (0, 6868)     0.215221170104
+  (0, 41758)    0.14424586198
+  (0, 16242)    0.115560138128
+  (0, 3668)     0.169463104229
+  (0, 33687)    0.18134186701
+  (0, 42347)    0.244903534338
+  (0, 30214)    0.173935675158
+  (0, 19663)    0.219337002949
+  (0, 10430)    0.210710863093
+  (0, 38753)    0.253060975895
+  (0, 11918)    0.548103837493
+  (0, 1483)     0.283007805783
+  (0, 2376)     0.371248887227
+  (0, 43674)    0.274472118608
+The format of star is
+ [2 4 5 ..., 4 5 5]
+</pre></div></div>
+</div>
+</div>
+</div>
+<div class="section" id="Part-3:-Compute-MSE">
+<h2>Part 3: Compute MSE<a class="headerlink" href="#Part-3:-Compute-MSE" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="Write-a-function-to-compute-step-2-to-8">
+<h3>Write a function to compute step 2 to 8<a class="headerlink" href="#Write-a-function-to-compute-step-2-to-8" title="Permalink to this headline">¶</a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">compute_CV_mse</span><span class="p">(</span><span class="n">df_text</span><span class="p">,</span> <span class="n">df_star</span><span class="p">,</span> <span class="n">n_fold</span><span class="p">,</span> <span class="n">n_words</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the Mean Squared Error (MSE) between predictied reponses and true responses in validation set.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    df_text: TF-IDF format sparse matrix</span>
+<span class="sd">    df_star: array of responses in logistic model</span>
+<span class="sd">    n_fold: number of folds in cross-validation, positive integer</span>
+<span class="sd">    n_words: number of keywords selected, positive integer</span>
+<span class="sd">    seed: random seed for splitting training and validation set</span>
+<span class="sd">    parameters: tuning parameters of logistic regression, positive float vector</span>
+
+<span class="sd">    Return</span>
+<span class="sd">    ------</span>
+<span class="sd">    Array</span>
+<span class="sd">        A numeric Array where each value in dimension 0 is the tuning parameter,</span>
+<span class="sd">        and each value in dimension 1 is MSE computed using the corresponding tuning parameter</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+
+<span class="sd">    &gt;&gt;&gt; text_features = vectorizer.fit_transform(text_clean)</span>
+<span class="sd">    ... star = np.array(review.stars)</span>
+<span class="sd">    ... compute_CV_mse(text_features, star, 2, 10, 1, (100.0, 1000.0))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># parameters must be positive</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_fold</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;n_fold is not an integer&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_fold</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n_fold should be positive&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n_words</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;n_words is not an integer&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n_words</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">test</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n_words should be positive&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">test</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;parameters should be positive&quot;</span><span class="p">)</span>
+    <span class="c1"># create K-folds</span>
+    <span class="n">kf</span> <span class="o">=</span> <span class="n">KFold</span><span class="p">(</span><span class="n">n_fold</span><span class="p">,</span> <span class="n">shuffle</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">random_state</span> <span class="o">=</span> <span class="n">seed</span><span class="p">)</span>
+    <span class="c1"># create empty dataframe</span>
+    <span class="n">mse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_fold</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)])</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">train_idx</span><span class="p">,</span><span class="n">val_idx</span> <span class="ow">in</span> <span class="n">kf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">df_text</span><span class="p">):</span>
+        <span class="c1"># create training and validation sets</span>
+        <span class="n">text_features_train</span> <span class="o">=</span> <span class="n">df_text</span><span class="p">[</span><span class="n">train_idx</span><span class="p">]</span>
+        <span class="n">text_features_val</span> <span class="o">=</span> <span class="n">df_text</span><span class="p">[</span><span class="n">val_idx</span><span class="p">]</span>
+        <span class="n">star_train</span> <span class="o">=</span> <span class="n">df_star</span><span class="p">[</span><span class="n">train_idx</span><span class="p">]</span>
+        <span class="n">star_val</span> <span class="o">=</span> <span class="n">df_star</span><span class="p">[</span><span class="n">val_idx</span><span class="p">]</span>
+        <span class="c1"># using $chi^2$ independent test to select top  1,000 keywords from training set</span>
+        <span class="n">fselect</span> <span class="o">=</span> <span class="n">SelectKBest</span><span class="p">(</span><span class="n">chi2</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">n_words</span><span class="p">)</span>
+        <span class="c1"># transform training set to format that fits select functuon</span>
+        <span class="n">text_features_train</span> <span class="o">=</span> <span class="n">fselect</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">text_features_train</span><span class="p">,</span> <span class="n">star_train</span><span class="p">)</span>
+        <span class="n">text_features_val</span> <span class="o">=</span> <span class="n">text_features_val</span><span class="p">[:,</span> <span class="n">fselect</span><span class="o">.</span><span class="n">get_support</span><span class="p">()]</span>
+        <span class="c1"># compute MSE for each parameter</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">para</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="c1"># logistic regression with C = parameter,</span>
+            <span class="c1"># where C is positive float, indicates &quot;Inverse of regularization strength&quot;,</span>
+            <span class="c1"># and smaller values specify stronger regularization.</span>
+            <span class="n">mod_temp</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">(</span><span class="n">C</span> <span class="o">=</span> <span class="n">para</span><span class="p">)</span>
+            <span class="c1"># fit regression on training set</span>
+            <span class="n">mod_temp</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">text_features_train</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">star_train</span><span class="p">)</span>
+            <span class="c1"># predict star values on validation set</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="n">mod_temp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">text_features_val</span><span class="p">)</span>
+            <span class="c1"># compute MSE as a dataframe, each value is one mse in one validation set</span>
+            <span class="n">mse</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="n">pred</span> <span class="o">-</span> <span class="n">star_val</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
+            <span class="n">t</span><span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">k</span><span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># compute overall MSE</span>
+        <span class="n">mse_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mse</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">n_fold</span><span class="p">,],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">parameters</span><span class="p">,</span> <span class="n">mse_out</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Execute-the-function">
+<h3>Execute the function<a class="headerlink" href="#Execute-the-function" title="Permalink to this headline">¶</a></h3>
+<p>compute MSE with 10 fold cross-validation, of first 1,000 keywords, with
+random splitting seed for training and validation sets = 1, and original
+tuning parameters = (1, 100, 1000, 10000, 100000).</p>
+<p><strong>NOTE:</strong> Original tuning parameter range is [1, 100,000], the current
+range [10, 100] is selected after many trails as the optimal range of
+tuning parameters**</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># output</span>
+<span class="n">para</span><span class="p">,</span> <span class="n">mse</span> <span class="o">=</span> <span class="n">compute_CV_mse</span><span class="p">(</span><span class="n">df_text</span> <span class="o">=</span> <span class="n">text_features</span><span class="p">,</span> <span class="n">df_star</span> <span class="o">=</span> <span class="n">star</span><span class="p">,</span> <span class="n">n_fold</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+               <span class="n">n_words</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;parameters&#39;</span> <span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">para</span><span class="p">),</span>
+     <span class="s1">&#39;mse&#39;</span> <span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">mse</span><span class="p">)}</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="n">df_sorted</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mse&#39;</span><span class="p">])</span>
+<span class="n">df_sorted</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="s1">&#39;result/df_sorted.h5&#39;</span><span class="p">,</span> <span class="s1">&#39;df_sorted&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s2">&quot;Sorted MSE and corresponding parameters: small to big&quot;</span><span class="p">)</span>
+<span class="n">df_sorted</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Sorted MSE and corresponding parameters: small to big
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mse</th>
+      <th>parameters</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>4</th>
+      <td>0.748335</td>
+      <td>50.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.749202</td>
+      <td>40.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.749553</td>
+      <td>20.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.749811</td>
+      <td>30.0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.749885</td>
+      <td>60.0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>0.750014</td>
+      <td>70.0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>0.751435</td>
+      <td>80.0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>0.753058</td>
+      <td>90.0</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>0.753077</td>
+      <td>10.0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>0.753630</td>
+      <td>100.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<p>Choose tuning parameters with minimum mse, and we get:</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">print</span><span class="p">(</span><span class="s2">&quot;The minimum MSE is&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">df_sorted</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="mi">4</span><span class="p">),</span> <span class="s2">&quot;with tuning parameter =&quot;</span><span class="p">,</span> <span class="n">df_sorted</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+The minimum MSE is 0.7483 with tuning parameter = 50.0
+</pre></div></div>
+</div>
+<p><strong>Plot MSE for different tuning parameters</strong></p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="s1">&#39;parameters&#39;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s2">&quot;mse&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Cross-validation MSE by tuning parameters </span><span class="se">\n</span><span class="s2">in multinomial logistic regression&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;fig/mse_logistic.png&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/Logistic_21_0.png" src="_images/Logistic_21_0.png" />
+</div>
+</div>
+<p>We observe that the multinomial logistic regression performs reasonably
+well. The cross-validated mean square error (MSE) is 0.748. It means
+that TF-IDF statistics from the reviews have explanatory and predictive
+powers of customers’ ratings of restaurants.</p>
+</div>
+</div>
+<div class="section" id="Part-4:-Testing">
+<h2>Part 4: Testing<a class="headerlink" href="#Part-4:-Testing" title="Permalink to this headline">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">test_n_words_positive</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Test that when n_words is negative, raise value error&quot;&quot;&quot;</span>
+    <span class="c1"># YOUR CODE HERE</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">compute_CV_mse</span><span class="p">(</span><span class="n">df_text</span> <span class="o">=</span> <span class="n">text_features</span><span class="p">,</span> <span class="n">df_star</span> <span class="o">=</span> <span class="n">star</span><span class="p">,</span> <span class="n">n_fold</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+               <span class="n">n_words</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">False</span>
+<span class="k">def</span> <span class="nf">test_n_words_integer</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Test that when n_words is negative, raise value error&quot;&quot;&quot;</span>
+    <span class="c1"># YOUR CODE HERE</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">compute_CV_mse</span><span class="p">(</span><span class="n">df_text</span> <span class="o">=</span> <span class="n">text_features</span><span class="p">,</span> <span class="n">df_star</span> <span class="o">=</span> <span class="n">star</span><span class="p">,</span> <span class="n">n_fold</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+               <span class="n">n_words</span> <span class="o">=</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">False</span>
+<span class="k">def</span> <span class="nf">test_n_folds_positive</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Test that when n_words is negative, raise value error&quot;&quot;&quot;</span>
+    <span class="c1"># YOUR CODE HERE</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">compute_CV_mse</span><span class="p">(</span><span class="n">df_text</span> <span class="o">=</span> <span class="n">text_features</span><span class="p">,</span> <span class="n">df_star</span> <span class="o">=</span> <span class="n">star</span><span class="p">,</span> <span class="n">n_fold</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span>
+               <span class="n">n_words</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">False</span>
+<span class="k">def</span> <span class="nf">test_n_folds_integer</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Test that when n_words is negative, raise value error&quot;&quot;&quot;</span>
+    <span class="c1"># YOUR CODE HERE</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">compute_CV_mse</span><span class="p">(</span><span class="n">df_text</span> <span class="o">=</span> <span class="n">text_features</span><span class="p">,</span> <span class="n">df_star</span> <span class="o">=</span> <span class="n">star</span><span class="p">,</span> <span class="n">n_fold</span> <span class="o">=</span> <span class="s2">&quot;f&quot;</span><span class="p">,</span>
+               <span class="n">n_words</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">False</span>
+<span class="k">def</span> <span class="nf">test_parameters_positive</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Test that when n_words is negative, raise value error&quot;&quot;&quot;</span>
+    <span class="c1"># YOUR CODE HERE</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">compute_CV_mse</span><span class="p">(</span><span class="n">df_text</span> <span class="o">=</span> <span class="n">text_features</span><span class="p">,</span> <span class="n">df_star</span> <span class="o">=</span> <span class="n">star</span><span class="p">,</span> <span class="n">n_fold</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+               <span class="n">n_words</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">False</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">test_n_words_positive</span><span class="p">()</span>
+<span class="n">test_n_words_integer</span><span class="p">()</span>
+<span class="n">test_n_folds_positive</span><span class="p">()</span>
+<span class="n">test_n_folds_integer</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Ohio-Yelp-Review-Analysis</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Modeling on Ohio's Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">Modeling on Ohio’s Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Data_Cleaning.html">Extract Restaurants Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Data_Cleaning.html#Extract-Reviews-for-Restaurants">Extract Reviews for Restaurants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LDA.html">Topics Analysis with Latent Dirichelet Allocation (LDA)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Logestic Regression Modeling with Cross Validation on Word Frequecy</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="LDA.html" title="previous chapter">Topics Analysis with Latent Dirichelet Allocation (LDA)</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Tian Xia, Ningning Long, Yue You.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/Logistic.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
