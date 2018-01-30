@@ -1110,26 +1110,33 @@ logistic regression - ‘.gitignore’ - Some write-up of ‘main.ipynb’</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-<h1 class="logo"><a href="index.html">Ohio-Yelp-Review-Analysis</a></h1>
-
-
-
-
-
-
-
-
-<h3>Navigation</h3>
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="README.html">Modeling on Ohio's Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Modeling on Ohio’s Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Data_Cleaning.html">Extract Restaurants Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Data_Cleaning.html#Extract-Reviews-for-Restaurants">Extract Reviews for Restaurants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="LDA.html">Topics Analysis with Latent Dirichelet Allocation (LDA)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Logistic.html">Logestic Regression Modeling with Cross Validation on Word Frequecy</a></li>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Modeling on Ohio’s Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a><ul>
+<li><a class="reference internal" href="#Abstract">Abstract</a></li>
+<li><a class="reference internal" href="#Data-Clean-and-Exploration">Data Clean and Exploration</a></li>
+<li><a class="reference internal" href="#Topics-Analysis-with-Latent-Dirichelet-Allocation-(LDA)">Topics Analysis with Latent Dirichelet Allocation (LDA)</a><ul>
+<li><a class="reference internal" href="#Text-Manipulation">Text Manipulation</a></li>
+<li><a class="reference internal" href="#Training-Set-and-Validation-Set">Training Set and Validation Set</a></li>
+<li><a class="reference internal" href="#Latent-Dirichelet-Allocation-Model">Latent Dirichelet Allocation Model</a></li>
+<li><a class="reference internal" href="#Further-Interpretation-of-Topics-with-A-Review">Further Interpretation of Topics with A Review</a></li>
+<li><a class="reference internal" href="#Customer-Rating-Prediction-with-Topics">Customer Rating Prediction with Topics</a></li>
 </ul>
-
+</li>
+<li><a class="reference internal" href="#Multinomial-Logestic-Regression-with-TF-IDF">Multinomial Logestic Regression with TF-IDF</a><ul>
+<li><a class="reference internal" href="#TF-IDF-transformation">TF-IDF transformation</a><ul>
+<li><a class="reference internal" href="#Definition-of-TF-IDF-Transformation">Definition of TF-IDF Transformation</a></li>
+<li><a class="reference internal" href="#Steps-in-TF-IDF-Transformation">Steps in TF-IDF Transformation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#Next-Step">Next Step</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#Conclusion">Conclusion</a></li>
+<li><a class="reference internal" href="#Author-Contributions">Author Contributions</a></li>
+</ul>
+</li>
+</ul>
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
@@ -1139,6 +1146,13 @@ logistic regression - ‘.gitignore’ - Some write-up of ‘main.ipynb’</p>
   </ul></li>
 </ul>
 </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/main.ipynb.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
