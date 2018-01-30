@@ -1,5 +1,10 @@
 # Introduction
 
+## Project Link
+[The project html website](https://ningning1992.github.io/Ohio-Yelp-Review-Analysis/)
+
+[The project Github repository](https://github.com/Ningning1992/Ohio-Yelp-Review-Analysis)
+
 ## Purpose of the repository.
 This repository is inspired by Yelp DataSet Challenge Round 10. The original data can be retrieved from [Yelp Dataset](https://www.yelp.com/dataset/challenge). We focus on a subset of the whole data, which is the restaurants from the state of Ohio. We tokenize the customers’ reviews and apply latent dirichelet allocation and multinomial logistic regression. Both methods provide insights about how customers’ review contribute to the ratings of restaurants. 
 
