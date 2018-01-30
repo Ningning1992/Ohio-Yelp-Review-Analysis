@@ -1,0 +1,143 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Modeling on Ohio&#39;s Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression &#8212; Ohio-Yelp-Review-Analysis 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Modeling on Ohio’s Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression" href="main.html" />
+    <link rel="prev" title="Welcome to Ohio-Yelp-Review-Analysis’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="modeling-on-ohio-s-restaurant-yelp-review-data-comparison-between-latent-dirichelet-allocation-and-multinomial-logistic-regression">
+<h1>Modeling on Ohio's Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression<a class="headerlink" href="#modeling-on-ohio-s-restaurant-yelp-review-data-comparison-between-latent-dirichelet-allocation-and-multinomial-logistic-regression" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="purpose-of-the-repository">
+<h2>Purpose of the repository.<a class="headerlink" href="#purpose-of-the-repository" title="Permalink to this headline">¶</a></h2>
+<p>This repository is inspired by Yelp DataSet Challenge Round 10. The original data can be retrieved from <a class="reference external" href="https://www.yelp.com/dataset/challenge">Yelp Dataset</a>. We focus on a subset of the whole data, which is the restaurants from the state of Ohio. We tokenize the customers’ reviews and apply latent dirichelet allocation and multinomial logistic regression. Both methods provide insights about how customers’ review contribute to the ratings of restaurants.</p>
+</div>
+<div class="section" id="how-to-use-this-repository">
+<h2>How to use this repository.<a class="headerlink" href="#how-to-use-this-repository" title="Permalink to this headline">¶</a></h2>
+<p>The result of analysis is summarized in the ‘main.ipynb’ and please refer to it for a quick introduction to the repository.</p>
+<p>Please use the <strong>yml</strong> file for the reference of the necessary environment and package dependencies for the scripts to run and use the <strong>Make</strong> file to automatically install the environment and run the Jupyter Notebook.</p>
+<p>Please go to <a class="reference external" href="https://www.yelp.com/dataset/challenge">Yelp Dataset Challenge</a> to download the Round 10 dataset <strong>before you run make</strong>. The dataset is about 5Gb JSON file and please uncompress them and store them in <strong>'data'</strong> folder after you clone the repository.</p>
+<p>This project is for academic use only and subject to the <a class="reference external" href="https://s3-media2.fl.yelpcdn.com/assets/srv0/engineering_pages/af4b9cebfb4f/assets/vendor/dataset-challenge-dataset-agreement.pdf">Yelp Dataset Challenge License</a>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>License: Subject to the terms set forth in the Data Agreement (specifically the restrictions set
+forth in Section 4 below), Yelp grants you a royalty-free, non-exclusive, revocable,
+non-sublicensable, non-transferable, fully paid-up right and license during the Term to use,
+access, and create derivative works of the Data in electronic form for academic purposes only.
+You may not use the Data for any other purpose without Yelp?s prior written consent. You
+acknowledge and agree that Yelp may request information about, review, audit, and/or monitor
+your use of the Data at any time in order to confirm compliance with the Data Agreement.
+Nothing herein shall be construed as a license to use Yelp?s registered trademarks or service
+marks, or any other Yelp branding.
+</pre></div>
+</div>
+</div>
+<div class="section" id="structure-of-this-repository">
+<h2>Structure of this repository.<a class="headerlink" href="#structure-of-this-repository" title="Permalink to this headline">¶</a></h2>
+<p>Please find the data that analyzed in the <strong>data</strong> folder, relevant figures in the <strong>fig</strong> folder and results in the <strong>result</strong> folder.</p>
+</div>
+<div class="section" id="licensing">
+<h2>Licensing.<a class="headerlink" href="#licensing" title="Permalink to this headline">¶</a></h2>
+<p>This repository is licensed under the <strong>MIT</strong> license</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Ohio-Yelp-Review-Analysis</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Modeling on Ohio's Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">Modeling on Ohio’s Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Data_Cleaning.html">Extract Restaurants Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Data_Cleaning.html#Extract-Reviews-for-Restaurants">Extract Reviews for Restaurants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LDA.html">Topics Analysis with Latent Dirichelet Allocation (LDA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Logistic.html">Logestic Regression Modeling with Cross Validation on Word Frequecy</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to Ohio-Yelp-Review-Analysis’s documentation!</a></li>
+      <li>Next: <a href="main.html" title="next chapter">Modeling on Ohio’s Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Tian Xia, Ningning Long, Yue You.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/README.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

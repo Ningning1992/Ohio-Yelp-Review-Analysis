@@ -1,0 +1,785 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Extract Restaurants Data &#8212; Ohio-Yelp-Review-Analysis 1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Topics Analysis with Latent Dirichelet Allocation (LDA)" href="LDA.html" />
+    <link rel="prev" title="Modeling on Ohio’s Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression" href="main.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput,
+div.nbinput div.prompt,
+div.nbinput div.input_area,
+div.nbinput div[class*=highlight],
+div.nbinput div[class*=highlight] pre,
+div.nboutput,
+div.nbinput div.prompt,
+div.nbinput div.output_area,
+div.nboutput div[class*=highlight],
+div.nboutput div[class*=highlight] pre {
+    background: none;
+    border: none;
+    padding: 0 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+/* avoid gaps between output lines */
+div.nboutput div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput,
+div.nboutput {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput,
+    div.nboutput {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput div.prompt pre {
+    color: #303F9F;
+}
+
+/* output prompt */
+div.nboutput div.prompt pre {
+    color: #D84315;
+}
+
+/* all prompts */
+div.nbinput div.prompt,
+div.nboutput div.prompt {
+    min-width: 8ex;
+    padding-top: 0.4em;
+    padding-right: 0.4em;
+    text-align: right;
+    flex: 0;
+}
+@media (max-width: 540px) {
+    div.nbinput div.prompt,
+    div.nboutput div.prompt {
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput div.prompt.empty {
+        padding: 0;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput div.prompt pre,
+div.nboutput div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput div.input_area,
+div.nboutput div.output_area {
+    padding: 0.4em;
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput div.input_area,
+    div.nboutput div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput div.input_area {
+    border: 1px solid #cfcfcf;
+    border-radius: 2px;
+    background: #f7f7f7;
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.pngmath center alignment in output cells */
+div.nboutput div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-bold { font-weight: bold; }
+</style>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pandas.io.json</span> <span class="kn">import</span> <span class="n">json_normalize</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">shelve</span>
+</pre></div>
+</div>
+</div>
+<p>The original data is too large to be uploaded onto GitHub. Thus, the
+pre-processing and extracting of data were conducted locally with the
+following code. The original data can be retrived from <a class="reference external" href="https://www.yelp.com/dataset/challenge">Yelp
+Dataset</a>. We extract a subset
+from it and save the data we worked with in the “data” folder in this
+repository. If you’d like to replicate the data cleaning and extraction
+process for this project, please download the raw JSON data, this
+notebook and run the process locally from your computer.</p>
+<div class="section" id="Extract-Restaurants-Data">
+<h1>Extract Restaurants Data<a class="headerlink" href="#Extract-Restaurants-Data" title="Permalink to this headline">¶</a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># the local path of JSON files that needed</span>
+<span class="n">json_business_path</span><span class="o">=</span><span class="s1">&#39;./data/business.json&#39;</span>
+<span class="n">json_review_path</span><span class="o">=</span><span class="s1">&#39;./data/review.json&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># extract business information</span>
+<span class="n">business_contents</span><span class="o">=</span><span class="p">[]</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_business_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fin</span><span class="p">:</span>
+        <span class="n">line</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">business_contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>As we can see below, the Yelp Dataset Challenge contains business
+information from different states and different business types. Among
+the most popular locations and business types, we focus on restaurants
+at Ohio.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># In order to control the scope the project, we take OH state, 10930 businesses</span>
+<span class="n">state</span><span class="o">=</span><span class="p">[]</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">business_contents</span><span class="p">:</span>
+    <span class="n">state</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">])</span>
+<span class="c1"># the 10 most popular locations</span>
+<span class="n">Counter</span><span class="p">(</span><span class="n">state</span><span class="p">)</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[4]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[(&#39;AZ&#39;, 47376),
+ (&#39;NV&#39;, 30571),
+ (&#39;ON&#39;, 26520),
+ (&#39;NC&#39;, 11299),
+ (&#39;OH&#39;, 10930),
+ (&#39;PA&#39;, 8916),
+ (&#39;QC&#39;, 7273),
+ (&#39;WI&#39;, 4190),
+ (&#39;EDH&#39;, 3561),
+ (&#39;BW&#39;, 3071)]
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># we focus on Restaurants in OH, around 4513 businesses</span>
+<span class="n">cat_of_business</span><span class="o">=</span><span class="p">[]</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">business_contents</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;OH&#39;</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cat_of_business</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="s1">&#39;categories&#39;</span><span class="p">])</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">next</span>
+
+<span class="c1"># The 10 most popular business types,focus on &#39;Restaurants&#39;</span>
+<span class="n">Counter</span><span class="p">(</span><span class="n">cat_of_business</span><span class="p">)</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[5]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>[(&#39;Restaurants&#39;, 4513),
+ (&#39;Food&#39;, 1916),
+ (&#39;Shopping&#39;, 1628),
+ (&#39;Nightlife&#39;, 1180),
+ (&#39;Bars&#39;, 1083),
+ (&#39;Beauty &amp; Spas&#39;, 930),
+ (&#39;American (Traditional)&#39;, 891),
+ (&#39;Automotive&#39;, 738),
+ (&#39;Pizza&#39;, 706),
+ (&#39;Sandwiches&#39;, 677)]
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># we have 4513 restaurants in OH to be reseaerched</span>
+<span class="n">OH_Restaurants</span><span class="o">=</span><span class="p">[]</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">business_contents</span><span class="p">:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;OH&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;Restaurants&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">[</span><span class="s1">&#39;categories&#39;</span><span class="p">]):</span>
+        <span class="n">OH_Restaurants</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s1">&#39;we will research </span><span class="si">%d</span><span class="s1"> restaurants in OH&#39;</span><span class="o">%</span><span class="k">len</span>(OH_Restaurants))
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+we will research 4513 restaurants in OH
+</pre></div></div>
+</div>
+<p>For the convenience of research and reproducibility, we will save the
+data that extracted from the original JSON data into data frames, put
+them in ‘data’ folder and use them for future analysis and statistical
+modeling. Note that we convert the restaurant data into csv file called
+‘restaurant.csv’. We will subset it and use part of all restaurant
+information in the following steps.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># we need to keep those columns and convert to csv</span>
+<span class="n">res_col</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span><span class="s1">&#39;city&#39;</span><span class="p">,</span><span class="s1">&#39;address&#39;</span><span class="p">,</span><span class="s1">&#39;name&#39;</span><span class="p">,</span><span class="s1">&#39;business_id&#39;</span><span class="p">,</span><span class="s1">&#39;stars&#39;</span><span class="p">,</span><span class="s1">&#39;review_count&#39;</span><span class="p">,</span><span class="s1">&#39;categories&#39;</span><span class="p">]</span>
+<span class="n">restaurants</span><span class="o">=</span><span class="n">json_normalize</span><span class="p">(</span><span class="n">OH_Restaurants</span><span class="p">)[</span><span class="n">res_col</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># a glimpse of the restaurant</span>
+<span class="n">restaurants</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>state</th>
+      <th>city</th>
+      <th>address</th>
+      <th>name</th>
+      <th>business_id</th>
+      <th>stars</th>
+      <th>review_count</th>
+      <th>categories</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>OH</td>
+      <td>Painesville</td>
+      <td>1 S State St</td>
+      <td>Sidewalk Cafe Painesville</td>
+      <td>Bl7Y-ATTzXytQnCceg5k6w</td>
+      <td>3.0</td>
+      <td>26</td>
+      <td>[American (Traditional), Breakfast &amp; Brunch, R...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>OH</td>
+      <td>Northfield</td>
+      <td>10430 Northfield Rd</td>
+      <td>Zeppe's Pizzeria</td>
+      <td>7HFRdxVttyY9GiMpywhhYw</td>
+      <td>3.0</td>
+      <td>7</td>
+      <td>[Pizza, Caterers, Italian, Wraps, Event Planni...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>OH</td>
+      <td>Mentor</td>
+      <td>9209 Mentor Ave</td>
+      <td>Firehouse Subs</td>
+      <td>lXcxSdPa2m__LqhsaL9t9A</td>
+      <td>3.5</td>
+      <td>9</td>
+      <td>[Restaurants, Sandwiches, Delis, Fast Food]</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>OH</td>
+      <td>Cleveland</td>
+      <td>13181 Cedar Rd</td>
+      <td>Richie Chan's Chinese Restaurant</td>
+      <td>Pawavw9U8rjxWVPU-RB7LA</td>
+      <td>3.5</td>
+      <td>22</td>
+      <td>[Chinese, Restaurants]</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>OH</td>
+      <td>Northfield</td>
+      <td>134 E Aurora Rd</td>
+      <td>Romeo's Pizza</td>
+      <td>RzVHK8Jfcy8RvXjn_z3OBw</td>
+      <td>4.0</td>
+      <td>4</td>
+      <td>[Restaurants, Pizza]</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">restaurants</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[9]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>(4513, 8)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="Extract-Reviews-for-Restaurants">
+<h1>Extract Reviews for Restaurants<a class="headerlink" href="#Extract-Reviews-for-Restaurants" title="Permalink to this headline">¶</a></h1>
+<p>After extracting the restaurants information, we move to extract the
+reviews for those restaurants. There are a lot of reviews, when we
+extract them from JSON file, we only extract those reviews which are for
+the restaurants we keep in our sample.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [35]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># extract review information</span>
+<span class="n">review_contents</span><span class="o">=</span><span class="p">[]</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_review_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fin</span><span class="p">:</span>
+        <span class="n">line</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="s1">&#39;business_id&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">restaurants</span><span class="o">.</span><span class="n">business_id</span><span class="p">):</span>
+            <span class="n">review_contents</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [66]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># save all the reviews for restaurants in Ohio. It&#39;s around 600Mb, so</span>
+<span class="c1"># just store them locally</span>
+<span class="k">with</span> <span class="n">shelve</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;./result/ohio_all_reviews&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">db</span><span class="p">:</span>
+    <span class="n">db</span><span class="p">[</span><span class="s1">&#39;reviews&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">review_contents</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [178]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># total 154764 reviews on 4513 restaurants</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">review_contents</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[178]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>154764
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># convert into data frame</span>
+<span class="n">reviews</span><span class="o">=</span><span class="n">json_normalize</span><span class="p">(</span><span class="n">review_contents</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>We’d like to remove restaurant with too few reviews. We see that there
+are some restaurants which have few reviews, so we only keep restaurants
+which have more than 100 reviews. Below, we can find the summary
+statistics for number of reviews for restaurants.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="n">reviews</span><span class="o">.</span><span class="n">business_id</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[12]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>count    4513.000000
+mean       34.292932
+std        57.777458
+min         3.000000
+25%         6.000000
+50%        15.000000
+75%        39.000000
+max       896.000000
+Name: business_id, dtype: float64
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># only keep the restaurants which have more than 100 reviews</span>
+<span class="n">keep_busID</span><span class="o">=</span><span class="n">reviews</span><span class="o">.</span><span class="n">business_id</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">reviews</span><span class="o">.</span><span class="n">business_id</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">100</span><span class="p">]</span>
+<span class="n">reviews_keep</span><span class="o">=</span><span class="n">reviews</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">reviews</span><span class="o">.</span><span class="n">business_id</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">keep_busID</span><span class="p">),:]</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [50]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># we can find the summary statistics for number of reviews for restaurants</span>
+<span class="c1"># after we exclude some restaurants with few reviews.</span>
+<span class="n">reviews_keep</span><span class="o">.</span><span class="n">business_id</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>Out[50]:
+</pre></div>
+</div>
+<div class="output_area highlight-none"><div class="highlight"><pre>
+<span></span>count    316.000000
+mean     190.575949
+std      122.290224
+min      101.000000
+25%      117.750000
+50%      149.000000
+75%      206.250000
+max      896.000000
+Name: business_id, dtype: float64
+</pre></div>
+</div>
+</div>
+<p>We only keep 316 restaurants after we exclude some restaurants with few
+reviews. As we can see in the follow plot, the range of reviews per
+restaurant is [100,900] after we filter the data set.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [176]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># plot the restaurant on x axis and number of reviews on y axis</span>
+<span class="n">reviews_keep</span><span class="o">.</span><span class="n">business_id</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Restaurants&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Number of Reviews&#39;</span><span class="p">)</span>
+
+<span class="n">n_obs</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">reviews_keep</span><span class="o">.</span><span class="n">business_id</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">rugplot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">n_obs</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="n">labelbottom</span><span class="o">=</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Number of Reviews Per Restaurant&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;./fig/NumberOfReviewsPerRestaurant.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/Data_Cleaning_24_0.png" src="_images/Data_Cleaning_24_0.png" />
+</div>
+</div>
+<p>As we can see in th following plot, the distribution of mean star rating
+for restaurants is skewed to the left with most restaurants having the
+mean star ratings in the range between 3 and 4. There are few
+restaurants which have earned mean ratings less than 2.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [177]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># the mean star rating for restaurants</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">distplot</span><span class="p">(</span><span class="n">reviews_keep</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;business_id&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()[</span><span class="s1">&#39;stars&#39;</span><span class="p">],</span><span class="n">rug</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Mean Star Ratings&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Mean Star Ratings for Restaurants&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;./fig/MeanRatings.png&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="_images/Data_Cleaning_26_0.png" src="_images/Data_Cleaning_26_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none"><div class="highlight"><pre>
+<span></span>In [57]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3"><div class="highlight"><pre>
+<span></span><span class="c1"># we save the restaurants data and reviews data into csv for future analysis</span>
+<span class="n">reviews_keep</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;./data/reviews.csv&#39;</span><span class="p">)</span>
+<span class="n">restaurants</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;./data/restaurant.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Ohio-Yelp-Review-Analysis</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="README.html">Modeling on Ohio's Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">Modeling on Ohio’s Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Extract Restaurants Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#Extract-Reviews-for-Restaurants">Extract Reviews for Restaurants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LDA.html">Topics Analysis with Latent Dirichelet Allocation (LDA)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Logistic.html">Logestic Regression Modeling with Cross Validation on Word Frequecy</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="main.html" title="previous chapter">Modeling on Ohio’s Restaurant Yelp Review Data: Comparison Between Latent Dirichelet Allocation and Multinomial Logistic Regression</a></li>
+      <li>Next: <a href="LDA.html" title="next chapter">Topics Analysis with Latent Dirichelet Allocation (LDA)</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Tian Xia, Ningning Long, Yue You.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/Data_Cleaning.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
